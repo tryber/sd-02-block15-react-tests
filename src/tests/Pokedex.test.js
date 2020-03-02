@@ -1,5 +1,5 @@
 import React from 'react';
-import { cleanup, fireEvent } from '@testing-library/react';
+import { cleanup, fireEvent, waitForDomChange } from '@testing-library/react';
 import renderWithRouter from '../Renderwithrouter';
 import App from '../App';
 
@@ -21,6 +21,14 @@ describe('Test #2', () => {
 });
 
 describe('Test #3', () => {
+  test('O botao deve conter o texto proximo pokemon', () => {
+    const { getByText } = renderWithRouter(<App />);
+
+    const nextButton = getByText(/Próximo Pokémon/i);
+    expect(nextButton).toBeDefined();
+    expect(getByText(/Próximo Pokémon/i)).toBeInTheDocument();
+  });
+
   test('Apertando o botao de proximo, deve exibir o proximo pokemon da lista', () => {
     const { getByTestId, getByText } = renderWithRouter(<App />);
 
@@ -29,6 +37,8 @@ describe('Test #3', () => {
     const firstPokemon = getByTestId(/pokemon-name/i).innerHTML;
     const nextButton = getByText(/Próximo Pokémon/i);
 
+    // Testando se o botao com o texto proximo pokémon existe na tela
+    expect(getByText(/Próximo Pokémon/i)).toBeInTheDocument();
     // Testando se o pokemon existe na tela
     expect(getByText(firstPokemon)).toBeInTheDocument();
 
@@ -58,5 +68,39 @@ describe('Test #3', () => {
       // Teste feito para ver se estamos percorrendo todos os pokemons
       expect(nextPokemon).not.toMatch(pokemonAtual);
     }
+  });
+});
+
+describe('Test #4', () => {
+  test('Testando se os botoes de filtro estão carregados na tela', () => {
+    const { getAllByTestId, getByText, getAllByText } = renderWithRouter(<App />);
+    const allButtons = getAllByTestId(/pokemon-type-button/i);
+    // Passando por todos os botoes dentro de allButtons
+    allButtons.forEach((button) => {
+      const textButton = button.innerHTML;
+      // Testando se todos os botoes de filtro estao na pagina
+      expect(getAllByText(textButton)[1] || getByText(textButton)).toBeInTheDocument();
+    });
+  });
+  test('A pokedex deve circular somente pelos pokemons que foram filtrados', () => {
+    const {
+      getAllByTestId, getAllByText, getByText, getByTestId,
+    } = renderWithRouter(<App />);
+    const nextButton = getByText(/Próximo Pokémon/i);
+    const allButtons = getAllByTestId(/pokemon-type-button/i);
+
+    allButtons.forEach((button) => {
+      const textButton = button.innerHTML;
+      fireEvent.click(getAllByText(textButton)[1] || getByText(textButton));
+      const firstPokemon = getByTestId(/pokemon-name/i).innerHTML;
+      let curPokemon = '';
+
+      while (firstPokemon !== curPokemon) {
+        const type = getByTestId(/pokemonType/i).innerHTML;
+        fireEvent.click(nextButton);
+        curPokemon = getByTestId(/pokemon-name/i).innerHTML;
+        expect(type).toBe(textButton);
+      }
+    });
   });
 });
