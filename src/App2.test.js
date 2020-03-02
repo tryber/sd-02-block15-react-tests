@@ -1,6 +1,6 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { Route, MemoryRouter } from 'react-router-dom';
+import { render, cleanup, fireEvent, getByText } from '@testing-library/react';
 import App from './App';
 import pokemons from './data';
 
@@ -50,6 +50,17 @@ describe('Pokemon test 6 - 10', () => {
       expect(queryByAltText(`${ele.name} sprite`)).toBeInTheDocument();
       expect(pokemons.some((elemen) => elemen.image === queryByAltText(`${ele.name} sprite`).src)).toBeTruthy();
       fireEvent.click(getByText(/Próximo pokémon/));
+    });
+  });
+  test('The pokémon displayed in Pokedéx must contain a navigation link to view details of this pokémon', () => {
+    const { queryByText, getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    pokemons.forEach((pokemon) => {
+      expect(getByText(/More details/).href).toBe(`http://localhost/pokemons/${pokemon.id}`);
+      fireEvent.click(queryByText('Próximo pokémon'));
     });
   });
 });
