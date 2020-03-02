@@ -38,7 +38,7 @@ describe('Pokemon test', () => {
 
   test('When pressing the next button, the page should display the next pokémon in the list', () => {
     const {
-      getByText, queryByText, queryByTestId, queryByAltText
+      getByText, queryByText, queryByTestId, queryByAltText,
     } = render(
       <MemoryRouter>
         <App />
@@ -59,5 +59,26 @@ describe('Pokemon test', () => {
     expect(queryByText(`Average weight: ${averageWeight.value} kg`)).toBeInTheDocument();
     expect(queryByAltText(`${name} sprite`)).toBeInTheDocument();
     expect(queryByTestId(`${name} ${type}`)).toBeInTheDocument();
+  });
+
+  test('The Pokédex must contain filter buttons', () => {
+    const { queryByText, queryByTestId, queryByAltText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const type = ['Fire', 'Psychic', 'Electric', 'Normal'];
+    type.forEach((ele) => {
+      const pokemonFilter = pokemons.filter((element) => element.type === ele);
+      fireEvent.click(queryByTestId(`${ele}type`));
+      expect(queryByText(pokemonFilter[0].name)).toBeInTheDocument();
+      pokemonFilter.forEach((eleme) => {
+        expect(queryByText(eleme.name)).toBeInTheDocument();
+        expect(queryByAltText(`${eleme.name} sprite`)).toBeInTheDocument();
+        expect(queryByTestId(`${eleme.name} ${eleme.type}`)).toBeInTheDocument();
+        expect(queryByText(`Average weight: ${eleme.averageWeight.value} kg`)).toBeInTheDocument();
+        fireEvent.click(queryByTestId(/Próximo pokémon/));
+      });
+    });
   });
 });

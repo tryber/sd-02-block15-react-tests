@@ -14,6 +14,7 @@ const Button = ({
     className={`button-text ${className}`}
     disabled={disabled}
     type="button"
+    data-testid={`${children}type`}
   >
     {children}
   </button>
