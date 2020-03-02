@@ -1,6 +1,7 @@
 import React from 'react';
-import { cleanup, fireEvent, waitForDomChange } from '@testing-library/react';
+import { cleanup, fireEvent } from '@testing-library/react';
 import renderWithRouter from '../Renderwithrouter';
+import pokemonMock from '../data';
 import App from '../App';
 
 afterEach(cleanup);
@@ -112,6 +113,49 @@ describe('Test #4', () => {
         // Comparando se o tipo do pokemon é igual ao texto do botao clicado
         expect(type).toBe(textButton);
       }
+    });
+  });
+});
+
+describe('Test #5', () => {
+  test('quando a pagina carrega, o filtro selecionado deve ser "all"', () => {
+    const { getByText, getByTestId } = renderWithRouter(<App />);
+    const nextButton = getByText(/Próximo Pokémon/i);
+
+    // Verificando se o filtro all está selecionado
+    pokemonMock.map((pokemon) => {
+      const pokemonName = pokemon.name;
+      const pokemonRenderName = getByTestId(/pokemon-name/i).innerHTML;
+      fireEvent.click(nextButton);
+      expect(pokemonName).toBe(pokemonRenderName);
+    });
+  });
+  test('o texto do botão de resete deve ser "All" e após clicá-lo, a Pokédex deve voltar a circular por todos os pokémons', () => {
+    const { getByText, getByTestId } = renderWithRouter(<App />);
+    const buttonAll = getByText(/All/i);
+    const nextButton = getByText(/Próximo Pokémon/i);
+    const fireButton = getByText(/Fire/i);
+    const firePokemons = pokemonMock.filter((pokemon) => pokemon.type === 'Fire');
+
+    expect(buttonAll).toBeInTheDocument();
+    expect(nextButton).toBeInTheDocument();
+    expect(fireButton).toBeInTheDocument();
+
+    fireEvent.click(fireButton);
+    firePokemons.map((pokemon) => {
+      const pokemonName = getByTestId(/pokemon-name/i).innerHTML;
+      fireEvent.click(nextButton);
+
+      expect(pokemon.name).toBe(pokemonName);
+    });
+
+    fireEvent.click(buttonAll);
+
+    pokemonMock.map((pokemon) => {
+      const pokemonName = getByTestId(/pokemon-name/i).innerHTML;
+      fireEvent.click(nextButton);
+
+      expect(pokemon.name).toBe(pokemonName);
     });
   });
 });
