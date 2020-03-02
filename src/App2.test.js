@@ -37,4 +37,19 @@ describe('Pokemon test 6 - 10', () => {
       }
     });
   });
+
+  test('Pokedéx must display the name, type, average weight and image of the Pokémon displayed', () => {
+    const { queryByAltText, queryByText, getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    pokemons.forEach((ele) => {
+      const { value, measurementUnit } = ele.averageWeight;
+      expect(queryByText(`Average weight: ${value} ${measurementUnit}`)).toBeInTheDocument();
+      expect(queryByAltText(`${ele.name} sprite`)).toBeInTheDocument();
+      expect(pokemons.some((elemen) => elemen.image === queryByAltText(`${ele.name} sprite`).src)).toBeTruthy();
+      fireEvent.click(getByText(/Próximo pokémon/));
+    });
+  });
 });
