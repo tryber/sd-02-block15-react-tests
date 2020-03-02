@@ -1,6 +1,6 @@
 import React from 'react';
-import { Route, MemoryRouter } from 'react-router-dom';
-import { render, cleanup, fireEvent, getByText } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { render, cleanup, fireEvent } from '@testing-library/react';
 import App from './App';
 import pokemons from './data';
 
