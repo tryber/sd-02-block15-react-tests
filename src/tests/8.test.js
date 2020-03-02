@@ -8,7 +8,12 @@ afterEach(cleanup);
 
 describe('8.', () => {
   test('Pokedex shows name, type and average weight of each pokemon', () => {
-    const { getByText, queryAllByText, queryByText, getByAltText } = renderWithRouter(<App />);
+    const {
+      getByText,
+      queryAllByText,
+      queryByText,
+      getByAltText,
+    } = renderWithRouter(<App />);
     const nextButton = getByText(/Próximo pokémon/i);
     allPokemons.forEach((pokemon) => {
       const pokemonName = getByText(pokemon.name);
