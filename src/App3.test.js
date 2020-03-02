@@ -10,7 +10,9 @@ afterEach(cleanup);
 describe('Pokemon test 11 - 15', () => {
   test('11, 12, 13, 14', () => {
     const history = createMemoryHistory();
-    const { getByText, queryByText, queryByAltText } = render(
+    const {
+      getByText, queryByText, queryAllByAltText, queryByAltText,
+    } = render(
       <Router history={history}>
         <App />
       </Router>,
@@ -18,7 +20,7 @@ describe('Pokemon test 11 - 15', () => {
 
     pokemons.forEach((pokemon, index) => {
       const {
-        name, summary, image, type, averageWeight: { value, measurementUnit },
+        name, summary, foundAt, image, type, averageWeight: { value, measurementUnit },
       } = pokemon;
       fireEvent.click(queryByText('More details'));
       // 11
@@ -37,6 +39,11 @@ describe('Pokemon test 11 - 15', () => {
       // 14
       expect(queryByText(`Game Locations of ${name}`)).toBeInTheDocument();
       expect(queryByText(`Game Locations of ${name}`).tagName).toBe('H2');
+      foundAt.forEach(({ location, map }, inde) => {
+        expect(queryByText(location)).toBeInTheDocument();
+        expect(queryAllByAltText(`${name} location`)[inde]).toBeInTheDocument();
+        expect(queryAllByAltText(`${name} location`)[inde].src).toBe(map);
+      });
       history.push('/');
       for (let i = 0; i < index + 1; i += 1) {
         fireEvent.click(queryByText('Próximo pokémon'));
