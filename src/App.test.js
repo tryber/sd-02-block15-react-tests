@@ -6,7 +6,7 @@ import pokemons from './data';
 
 afterEach(cleanup);
 
-describe('Pokemon test', () => {
+describe('Pokemon test 1 - 5', () => {
   test('renders a reading with the text `Pokédex`', () => {
     const { getByText } = render(
       <MemoryRouter>
