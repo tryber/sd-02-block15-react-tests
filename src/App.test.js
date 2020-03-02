@@ -50,6 +50,7 @@ describe('Pokemon test 1 - 5', () => {
       expect(getByText(ele.name)).toBeInTheDocument();
       expect(queryByText(`Average weight: ${ele.averageWeight.value} kg`)).toBeInTheDocument();
       expect(queryByAltText(`${ele.name} sprite`)).toBeInTheDocument();
+      expect(pokemons.some((elemen) => elemen.image === queryByAltText(`${ele.name} sprite`).src)).toBeTruthy();
       expect(queryByTestId(`${ele.name} ${ele.type}`)).toBeInTheDocument();
       fireEvent.click(getByText(/Próximo pokémon/));
     });
