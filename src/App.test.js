@@ -47,7 +47,7 @@ describe('Pokemon test', () => {
     expect(getByText(/Próximo pokémon/)).toBeDefined();
     // Todos os pokemons
     pokemons.forEach((ele) => {
-      expect(getByText(`${ele.name}`)).toBeInTheDocument();
+      expect(getByText(ele.name)).toBeInTheDocument();
       expect(queryByText(`Average weight: ${ele.averageWeight.value} kg`)).toBeInTheDocument();
       expect(queryByAltText(`${ele.name} sprite`)).toBeInTheDocument();
       expect(queryByTestId(`${ele.name} ${ele.type}`)).toBeInTheDocument();
@@ -55,7 +55,7 @@ describe('Pokemon test', () => {
     });
     // Testando se o ciclo foi completo
     const { name, averageWeight, type } = pokemons[0];
-    expect(getByText(`${name}`)).toBeInTheDocument();
+    expect(getByText(name)).toBeInTheDocument();
     expect(queryByText(`Average weight: ${averageWeight.value} kg`)).toBeInTheDocument();
     expect(queryByAltText(`${name} sprite`)).toBeInTheDocument();
     expect(queryByTestId(`${name} ${type}`)).toBeInTheDocument();
@@ -72,7 +72,7 @@ describe('Pokemon test', () => {
       const pokemonFilter = pokemons.filter((element) => element.type === ele);
       fireEvent.click(queryByTestId(`${ele}type`));
       expect(queryByText(pokemonFilter[0].name)).toBeInTheDocument();
-      expect(queryByTestId(`${ele}type`).innerHTML).toBe(`${ele}`);
+      expect(queryByTestId(`${ele}type`).innerHTML).toBe(ele);
       pokemonFilter.forEach((eleme) => {
         expect(queryByText(eleme.name)).toBeInTheDocument();
         expect(queryByAltText(`${eleme.name} sprite`)).toBeInTheDocument();
