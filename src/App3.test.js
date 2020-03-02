@@ -8,9 +8,9 @@ import pokemons from './data';
 afterEach(cleanup);
 
 describe('Pokemon test 11 - 15', () => {
-  test('The Pokémon details page should display the name, type, average weight and image of the Pokémon displayed and not Product Details link', () => {
+  test('11, 12, 13', () => {
     const history = createMemoryHistory();
-    const { queryByText, queryByAltText } = render(
+    const { getByText, queryByText, queryByAltText } = render(
       <Router history={history}>
         <App />
       </Router>,
@@ -18,7 +18,7 @@ describe('Pokemon test 11 - 15', () => {
 
     pokemons.forEach((pokemon, index) => {
       const {
-        name, image, type, averageWeight: { value, measurementUnit },
+        name, summary, image, type, averageWeight: { value, measurementUnit },
       } = pokemon;
       fireEvent.click(queryByText('More details'));
       expect(queryByText(name)).toBeInTheDocument();
@@ -27,6 +27,10 @@ describe('Pokemon test 11 - 15', () => {
       expect(queryByAltText(`${name} sprite`)).toBeInTheDocument();
       expect(queryByAltText(`${name} sprite`).src).toBe(image);
       expect(queryByText('More details')).toBeNull();
+      expect(getByText('Summary')).toBeInTheDocument();
+      expect(getByText('Summary').tagName).toBe('H2');
+      expect(queryByText(summary)).toBeInTheDocument();
+      expect(getByText('Summary').nextSibling.innerHTML).toBe(summary);
       history.push('/');
       for (let i = 0; i < index + 1; i += 1) {
         fireEvent.click(queryByText('Próximo pokémon'));
