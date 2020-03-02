@@ -1,5 +1,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
+import { Router } from 'react-router';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import App from './App';
 import pokemons from './data';
@@ -61,6 +63,23 @@ describe('Pokemon test 6 - 10', () => {
     pokemons.forEach((pokemon) => {
       expect(getByText(/More details/).href).toBe(`http://localhost/pokemons/${pokemon.id}`);
       fireEvent.click(queryByText('Próximo pokémon'));
+    });
+  });
+  test(' ', () => {
+    const history = createMemoryHistory();
+    const { queryByText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+
+    pokemons.forEach((pokemon, index) => {
+      fireEvent.click(queryByText('More details'));
+      expect(history.location.pathname).toBe(`/pokemons/${pokemon.id}`);
+      history.push('/');
+      for (let i = 0; i < index + 1; i += 1) {
+        fireEvent.click(queryByText('Próximo pokémon'));
+      }
     });
   });
 });
