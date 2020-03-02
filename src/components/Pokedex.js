@@ -42,7 +42,7 @@ class Pokedex extends React.Component {
     const pokemonTypes = this.fetchPokemonTypes();
 
     return (
-      <div className="pokedex-buttons-panel">
+      <div data-testid="page-pokedex" className="pokedex-buttons-panel">
         <Button
           onClick={() => this.filterPokemons('all')}
           className="filter-button"

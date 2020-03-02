@@ -15,7 +15,7 @@ class Pokemon extends React.Component {
     const { measurementUnit, value } = averageWeight;
 
     return (
-      <div className="pokemon">
+      <div data-testid="pokemon" className="pokemon">
         <div className="pokemon-overview">
           <p>{name}</p>
           <p>{type}</p>
