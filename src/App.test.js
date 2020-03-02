@@ -72,6 +72,7 @@ describe('Pokemon test', () => {
       const pokemonFilter = pokemons.filter((element) => element.type === ele);
       fireEvent.click(queryByTestId(`${ele}type`));
       expect(queryByText(pokemonFilter[0].name)).toBeInTheDocument();
+      expect(queryByTestId(`${ele}type`).innerHTML).toBe(`${ele}`);
       pokemonFilter.forEach((eleme) => {
         expect(queryByText(eleme.name)).toBeInTheDocument();
         expect(queryByAltText(`${eleme.name} sprite`)).toBeInTheDocument();
