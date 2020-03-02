@@ -45,7 +45,7 @@ describe('Pokemon test', () => {
       </MemoryRouter>,
     );
     expect(getByText(/Próximo pokémon/)).toBeDefined();
-    // Charmander
+    // Todos os pokemons
     pokemons.forEach((ele) => {
       expect(getByText(`${ele.name}`)).toBeInTheDocument();
       expect(queryByText(`Average weight: ${ele.averageWeight.value} kg`)).toBeInTheDocument();
@@ -53,10 +53,11 @@ describe('Pokemon test', () => {
       expect(queryByTestId(`${ele.name} ${ele.type}`)).toBeInTheDocument();
       fireEvent.click(getByText(/Próximo pokémon/));
     });
-    // Pikachu
-    expect(getByText(/Pikachu/)).toBeInTheDocument();
-    expect(queryByText('Average weight: 6.0 kg')).toBeInTheDocument();
-    expect(queryByAltText(/Pikachu sprite/)).toBeInTheDocument();
-    expect(queryByTestId(/Pikachu Electric/)).toBeInTheDocument();
+    // Testando se o ciclo foi completo
+    const { name, averageWeight, type } = pokemons[0];
+    expect(getByText(`${name}`)).toBeInTheDocument();
+    expect(queryByText(`Average weight: ${averageWeight.value} kg`)).toBeInTheDocument();
+    expect(queryByAltText(`${name} sprite`)).toBeInTheDocument();
+    expect(queryByTestId(`${name} ${type}`)).toBeInTheDocument();
   });
 });
