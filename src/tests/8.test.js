@@ -7,7 +7,7 @@ import App from '../App';
 afterEach(cleanup);
 
 describe('8.', () => {
-  test('Pokedex shows name, type and average weight of each pokemon', () => {
+  test('Pokedex shows name, type, average weight and shows a image of each pokemon', () => {
     const {
       getByText,
       queryAllByText,
