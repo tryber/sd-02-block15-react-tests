@@ -87,18 +87,29 @@ describe('Test #4', () => {
       getAllByTestId, getAllByText, getByText, getByTestId,
     } = renderWithRouter(<App />);
     const nextButton = getByText(/Próximo Pokémon/i);
-    const allButtons = getAllByTestId(/pokemon-type-button/i);
-
-    allButtons.forEach((button) => {
+    const allTypeButtons = getAllByTestId(/pokemon-type-button/i);
+    // Loop para pegar todos os botoes de tipo
+    allTypeButtons.forEach((button) => {
+      // Pegando o texto do botao
       const textButton = button.innerHTML;
+      // Clicando no botao com o texto(tipo) atual
+      // Como o tipo do pokemon aparece na tela quando ele é renderizado, entao,
+      // temos que usar o getAllByText pq o texto do botao será o segundo
+      // tipo renderizado na tela por isso a gente procura a posicao[1] do array.
       fireEvent.click(getAllByText(textButton)[1] || getByText(textButton));
+      // Guarda o primeiro pokemon na variavel
       const firstPokemon = getByTestId(/pokemon-name/i).innerHTML;
+      // Variavel para guardar o pokemon atual(current)
       let curPokemon = '';
-
+      // Loop para testar se o primeiro Pokemon for diferente do atual
       while (firstPokemon !== curPokemon) {
+        // Guardar o texto do label com data-testid pokemonType
         const type = getByTestId(/pokemonType/i).innerHTML;
+        // Clicando no botao proximo pokemon
         fireEvent.click(nextButton);
+        // Guardando o pokemon atual
         curPokemon = getByTestId(/pokemon-name/i).innerHTML;
+        // Comparando se o tipo do pokemon é igual ao texto do botao clicado
         expect(type).toBe(textButton);
       }
     });
