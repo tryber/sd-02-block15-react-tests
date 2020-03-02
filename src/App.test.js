@@ -67,7 +67,7 @@ describe('Pokemon test', () => {
         <App />
       </MemoryRouter>,
     );
-    const type = ['Fire', 'Psychic', 'Electric', 'Normal'];
+    const type = ['Fire', 'Psychic', 'Electric', 'Normal', 'Dragon', 'Bug', 'Poison'];
     type.forEach((ele) => {
       const pokemonFilter = pokemons.filter((element) => element.type === ele);
       fireEvent.click(queryByTestId(`${ele}type`));
@@ -78,8 +78,27 @@ describe('Pokemon test', () => {
         expect(queryByAltText(`${eleme.name} sprite`)).toBeInTheDocument();
         expect(queryByTestId(`${eleme.name} ${eleme.type}`)).toBeInTheDocument();
         expect(queryByText(`Average weight: ${eleme.averageWeight.value} kg`)).toBeInTheDocument();
-        fireEvent.click(queryByTestId(/Próximo pokémon/));
+        fireEvent.click(queryByText(/Próximo pokémon/));
       });
     });
+  });
+  test('The Pokédex must contain a button to reset the filter', () => {
+    const { queryByText, queryByTestId } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const checkPokeAll = () => {
+      pokemons.forEach((ele) => {
+        expect(queryByTestId(`${ele.name} ${ele.type}`).innerHTML).toBe(ele.type);
+        fireEvent.click(queryByText('Próximo pokémon'));
+      });
+    };
+    expect(queryByText('All')).toBeInTheDocument();
+    expect(queryByText('All')).not.toBeNull();
+    checkPokeAll();
+    fireEvent.click(queryByText('Dragon'));
+    fireEvent.click(queryByText('All'));
+    checkPokeAll();
   });
 });
