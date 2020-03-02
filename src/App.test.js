@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import App from './App';
-import pokemons from './data';
+import pokemons from './data2';
 
 afterEach(cleanup);
 

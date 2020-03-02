@@ -4,7 +4,7 @@ import { createMemoryHistory } from 'history';
 import { Router } from 'react-router';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import App from './App';
-import pokemons from './data';
+import pokemons from './data2';
 
 afterEach(cleanup);
 
