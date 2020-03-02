@@ -65,7 +65,7 @@ describe('Pokemon test 6 - 10', () => {
       fireEvent.click(queryByText('Próximo pokémon'));
     });
   });
-  test(' ', () => {
+  test('When clicking on the pokemon navigation link, the application should be redirected to the pokemon details page', () => {
     const history = createMemoryHistory();
     const { queryByText } = render(
       <Router history={history}>
