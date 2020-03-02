@@ -13,7 +13,7 @@ describe('6.', () => {
     const allButton = getByText(/All/i);
     pokemonTypes.forEach((type) => {
       const actualType = getAllByText(type)[1] || getByText(type);
-      expect(actualType.tagName).toBe('BUTTON');
+      expect(actualType.tagName === 'BUTTON').toBeTruthy();
       expect(actualType).toBeInTheDocument();
       expect(allButton).toBeInTheDocument();
     });

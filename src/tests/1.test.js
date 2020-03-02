@@ -7,6 +7,6 @@ afterEach(cleanup);
 
 test('renders a reading with the text `Pokédex`', () => {
   const { getByText } = renderWithRouter(<App />);
-  const heading = getByText(/Pokédex/i);
+  const heading = getByText(/Encountered pokémons/i);
   expect(heading).toBeInTheDocument();
 });
