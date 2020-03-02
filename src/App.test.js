@@ -7,7 +7,6 @@ import pokemonsMock from './services/mockPkmnData';
 afterEach(cleanup);
 
 describe('Pokemon app.js tests', () => {
-
   test('0 - Renders a reading with the text `Pokédex`', () => {
     const { getByText } = render(
       <MemoryRouter>
@@ -51,5 +50,21 @@ describe('Pokemon app.js tests', () => {
       fireEvent.click(nextBtn);
     });
     expect(getByText(pokemonsMock[0].name)).toBeInTheDocument();
+  });
+
+  test('4 - A Pokédex deve conter botões de filtro', () => {
+    const { getByText, getAllByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const typePoke = pokemonsMock.map((pokemon) => pokemon.type);
+    typePoke.forEach((typePokemon) => {
+      const nextBtn = getAllByText(typePokemon)[1] || getByText(typePokemon);
+      expect(nextBtn).toBeInTheDocument();
+      fireEvent.click(nextBtn);
+      const pokeFilter = pokemonsMock.filter((pokemon) => pokemon.type === typePokemon);
+      expect(getByText(pokeFilter[0].name)).toBeInTheDocument();
+    });
   });
 });
