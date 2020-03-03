@@ -19,5 +19,9 @@ describe('Bonus', () => {
     expect(getByText('Locations').href).toBe('http://localhost/locations');
     fireEvent.click(getByText('Locations'));
     expect(history.location.pathname).toBe('/locations');
+    expect(getByText('Generations')).toBeInTheDocument();
+    expect(getByText('Generations').href).toBe('http://localhost/generations');
+    fireEvent.click(getByText('Generations'));
+    expect(history.location.pathname).toBe('/generations');
   });
-})
+});

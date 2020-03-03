@@ -40,11 +40,23 @@ class Locations extends React.Component {
   }
 
   render() {
-    const { results, offset,controle } = this.state;
+    const { results, offset, controle } = this.state;
     return (
       <div>
-        <button disabled={(offset === 20) ? !false : false} onClick={this.previousButton} type="button">Previous Page</button>
-        <button disabled={(offset >= controle - 20) ? !false : false} onClick={this.nextButton} type="button">Next Page</button>
+        <button
+          disabled={(offset === 20) ? !false : false}
+          onClick={this.previousButton}
+          type="button"
+        >
+          Previous Page
+        </button>
+        <button
+          disabled={(offset >= controle - 20) ? !false : false}
+          onClick={this.nextButton}
+          type="button"
+        >
+          Next Page
+        </button>
         {results.map(({ name }) => (
           <div key={name}>
             <h2>{name}</h2>
