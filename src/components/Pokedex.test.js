@@ -57,11 +57,12 @@ describe('3 - Testing "Próximo pokémon" button', () => {
   });
 });
 
-// describe('4 - The Pokédex must contain filter buttons', () => {
-//   it('The button text must be the type name, p. ex. "Psychic"', () => expect().toBe(String));
-//   const { getAllByText, getByText } = render(
-//     <MemoryRouter>
-//       <App />
-//     </MemoryRouter>,
-//   );
-//});
+describe('4 - The Pokédex must contain filter buttons', () => {
+  it('The button text must be the type name, p. ex. "Psychic"', () => expect().toBe(String));
+  const { getAllByText, getByText } = render(
+    <MemoryRouter>
+      <App />
+    </MemoryRouter>,
+  );
+  const type = ['Fire', 'Psychic', 'Electric', 'Normal', 'Dragon', 'Bug', 'Poison'];
+});
