@@ -86,7 +86,7 @@ describe('4- Pokedéx must contain filter buttons', () => {
     const PokeType = ['Electric', 'Fire', 'Bug', 'Poison', 'Psychic', 'Normal', 'Dragon'];
     PokeType.forEach((tipo) => {
       const typeList = Pokemon.filter((data) => data.type === tipo);
-      const buttonType = getByTestId(tipo);
+      const buttonType = getByTestId(`button_${tipo}`);
       const nextPokemonButton = getByText('Próximo pokémon');
       fireEvent.click(buttonType);
       for (let i = 0; i < typeList.length; i += 1) {
@@ -94,5 +94,8 @@ describe('4- Pokedéx must contain filter buttons', () => {
         fireEvent.click(nextPokemonButton);
       }
     });
+  });
+  test("4.2- Button's text must have the same name as type", () => {
+    
   });
 });
