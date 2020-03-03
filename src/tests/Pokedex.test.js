@@ -203,3 +203,52 @@ describe('Test #7', () => {
     });
   });
 });
+
+describe('Test #8', () => {
+  test('A pokedex deve exibir o nome, tipo, peso medio e imagem do pokemon exibido', () => {
+    const {
+      getByText, getByTestId, getAllByText, getByAltText,
+    } = renderWithRouter(<App />);
+    const nome = getByTestId(/pokemon-name/i).innerHTML;
+    const pokemonFilter = [pokemonMock.find((pokemon) => pokemon.name === nome)];
+    pokemonFilter.map(({ name, type, averageWeight: { value, measurementUnit }, image }) => {
+      const { src, alt } = getByAltText(`${name} sprite`);
+      expect(getByText(name)).toBeInTheDocument();
+      expect(getAllByText(type)[0]).toBeInTheDocument();
+      expect(getByText(`Average weight: ${value} ${measurementUnit}`)).toBeInTheDocument();
+      expect(src).toBe(image);
+      expect(alt).toMatch(`${name}`);
+    });
+  });
+});
+
+describe('Test #9', () => {
+  test('O pokemon exibido deve conter um link com url /pokemon/$id,em que, é a id do pokemon, para exibir detalhes desde pokemon', () => {
+    const { getByText } = renderWithRouter(<App />);
+    const nextButton = getByText(/Próximo Pokémon/i);
+
+    pokemonMock.forEach(({ id }) => {
+      const details = getByText(/details/i).href;
+      expect(details).toMatch(`/pokemons/${id}`);
+      fireEvent.click(nextButton);
+    });
+  });
+});
+
+describe('Test #10', () => {
+  test('Clicando no link de details a pagina deve ser redirecionada para a pagina de detalhes', () => {
+    const { getByText, history } = renderWithRouter(<App />);
+    const detailsButton = getByText(/details/i);
+    expect(detailsButton.tagName).toBe('A');
+    expect(getByText(detailsButton.innerHTML)).toBeInTheDocument();
+
+    let curPath = history.location.pathname;
+    const pokemonId = pokemonMock[0].id;
+    expect(curPath).toMatch('/');
+
+    fireEvent.click(detailsButton);
+
+    curPath = history.location.pathname;
+    expect(curPath).toMatch(`/pokemons/${pokemonId}`);
+  });
+});
