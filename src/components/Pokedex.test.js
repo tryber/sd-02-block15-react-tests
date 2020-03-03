@@ -71,3 +71,40 @@ describe('03 - testing button "Próximo pokémon"', () => {
     expect(getByText(pokemons[0].name)).toBeInTheDocument();
   });
 });
+
+describe('04 - Pokedex must have filter buttons', () => {
+  it('when type of pokemon is selected, pokedex must show only the respective pokemons', () => {
+    const { getByTestId, getAllByText, getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const nextPokemonButton = getByText(/Próximo pokémon/);
+
+    pokemons.forEach(({ type }) => {
+      expect(getByTestId(type)).toBeInTheDocument();
+      fireEvent.click(getByTestId(type));
+      expect(getAllByText(type).length).toEqual(2);
+      const pokemonsTypes = pokemons.filter((pokemon) => pokemon.type === type);
+      pokemonsTypes.forEach((pokemon) => {
+        expect(getByText(pokemon.name)).toBeInTheDocument();
+        if (pokemonsTypes.length > 1) {
+          expect(getByText(pokemon.name)).toBeInTheDocument();
+          fireEvent.click(nextPokemonButton);
+        }
+      });
+    });
+  });
+
+  it('text of button must have be the pokemon type name', () => {
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    pokemons.forEach(({ type }) => {
+      fireEvent.click(getByTestId(type));
+      expect(getByTestId(type).innerHTML).toMatch(type);
+    });
+  });
+});
