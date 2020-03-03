@@ -75,3 +75,24 @@ describe('3- After clicking next, the page must exhibit the next pokemon from li
     }
   });
 });
+
+describe('4- Pokedéx must contain filter buttons', () => {
+  test('4.1- Starting from one type to another, Pokedéx must show only pokemons from that type', () => {
+    const { getByText, getByTestId } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    const PokeType = ['Electric', 'Fire', 'Bug', 'Poison', 'Psychic', 'Normal', 'Dragon'];
+    PokeType.forEach((tipo) => {
+      const typeList = Pokemon.filter((data) => data.type === tipo);
+      const buttonType = getByTestId(tipo);
+      const nextPokemonButton = getByText('Próximo pokémon');
+      fireEvent.click(buttonType);
+      for (let i = 0; i < typeList.length; i += 1) {
+        expect(getByText(typeList[i].name)).toBeInTheDocument();
+        fireEvent.click(nextPokemonButton);
+      }
+    });
+  });
+});
