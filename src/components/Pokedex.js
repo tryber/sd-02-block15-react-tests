@@ -78,6 +78,7 @@ class Pokedex extends React.Component {
         {this.renderPokemonButtonsPanel()}
         <Button
           className="pokedex-button"
+          data-testid="next-pokemon-button"
           onClick={() => this.nextPokemon(filteredPokemons.length)}
           disabled={filteredPokemons.length <= 1}
         >
