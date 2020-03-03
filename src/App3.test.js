@@ -11,7 +11,7 @@ describe('Pokemon test 11 - 15', () => {
   test('11, 12, 13, 14', () => {
     const history = createMemoryHistory();
     const {
-      getByText, queryByText, queryAllByAltText, queryByAltText,
+      getByText, queryByLabelText, queryByText, queryAllByAltText, queryByAltText,
     } = render(
       <Router history={history}>
         <App />
@@ -44,6 +44,14 @@ describe('Pokemon test 11 - 15', () => {
         expect(queryAllByAltText(`${name} location`)[inde]).toBeInTheDocument();
         expect(queryAllByAltText(`${name} location`)[inde].src).toBe(map);
       });
+      // 15
+      expect(queryByLabelText('Pokémon favoritado?')).toBeInTheDocument();
+      fireEvent.click(queryByLabelText('Pokémon favoritado?'));
+      expect(queryByLabelText('Pokémon favoritado?').checked).toBeTruthy();
+      expect(JSON.parse(localStorage.getItem('favoritePokemonIds')).some((ele) => ele === pokemon.id)).toBeTruthy();
+      fireEvent.click(queryByLabelText('Pokémon favoritado?'));
+      expect(queryByLabelText('Pokémon favoritado?').checked).not.toBeTruthy();
+      expect(JSON.parse(localStorage.getItem('favoritePokemonIds')).some((ele) => ele === pokemon.id)).not.toBeTruthy();
       history.push('/');
       for (let i = 0; i < index + 1; i += 1) {
         fireEvent.click(queryByText('Próximo pokémon'));
