@@ -18,7 +18,6 @@ class GenerationInfo extends React.Component {
 
   render() {
     const { results } = this.state;
-    console.log(results)
     return (
       <div>
         {results.map(({ name }) => <div key={name}><h3>{name}</h3></div>)}
