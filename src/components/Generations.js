@@ -22,13 +22,13 @@ class Generations extends React.Component {
       <div>
         {arrResults.map(({ name, url }, index) => (
           <div key={name}>
-            <Link 
-            to={{
-              pathname: `/generations/${index + 1}`,
-              state: {
-                url,
-              },
-            }}
+            <Link
+              to={{
+                pathname: `/generations/${index + 1}`,
+                state: {
+                  url,
+                },
+              }}
             >
               {name}
             </Link>
