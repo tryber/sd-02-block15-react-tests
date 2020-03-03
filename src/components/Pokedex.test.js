@@ -1,6 +1,7 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Router } from 'react-router-dom';
 import { render, cleanup, fireEvent } from '@testing-library/react';
+import { createMemoryHistory } from 'history';
 import App from '../App';
 import Pokedex from './Pokedex';
 import pokemons from '../data';
@@ -165,4 +166,103 @@ test('6 - Generate dinamic button to type', () => {
   expect(getByText('Psychic')).toBeInTheDocument();
   expect(getByText('Fire')).toBeInTheDocument();
   expect(queryByText('Bug')).not.toBeInTheDocument();
+});
+
+test('7 - Button disabled if only one Pokemon', () => {
+  const { getByText } = render(
+    <MemoryRouter initialEntries={['/']}>
+      <App />
+    </MemoryRouter>,
+  );
+  const nextPokemonButton = getByText('Próximo pokémon');
+  fireEvent.click(getByText('Poison'));
+  expect(nextPokemonButton.disabled).toBeTruthy();
+  fireEvent.click(getByText('Psychic'));
+  expect(nextPokemonButton.disabled).toBeFalsy();
+});
+
+describe('8 - Pkedex should show name, type, average weight and image', () => {
+  test('8.1 - Showing name, type and average weight', () => {
+    const { getByText, getAllByText } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    const nextPokemonButton = getByText('Próximo pokémon');
+    pokemons.forEach(({ name, type, averageWeight: { value, measurementUnit } }) => {
+      const pokemonName = getByText(name);
+      const pokemonType = getAllByText(type)[0];
+      const pokemonWeigth = getByText(`Average weight: ${value} ${measurementUnit}`);
+      expect(pokemonName).toBeInTheDocument();
+      expect(pokemonType).toBeInTheDocument();
+      expect(pokemonWeigth).toBeInTheDocument();
+      fireEvent.click(nextPokemonButton);
+    });
+  });
+  test('8.2 - Showing image', () => {
+    const { getByAltText, getByText } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    const nextPokemonButton = getByText('Próximo pokémon');
+    pokemons.forEach(({ name, image }) => {
+      const pokemonImage = getByAltText(`${name} sprite`);
+      expect(pokemonImage).toBeInTheDocument();
+      expect(pokemonImage.src).toBe(image);
+      fireEvent.click(nextPokemonButton);
+    });
+  });
+});
+
+describe('9 - Nav link to show details', () => {
+  test('9.1 - nav link to id', () => {
+    const { getByText } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    const nextPokemonButton = getByText('Próximo pokémon');
+    pokemons.forEach(({ id }) => {
+      const moreDetail = getByText('More details');
+      expect(moreDetail).toBeInTheDocument();
+      expect(moreDetail.href).toBe(`http://localhost/pokemons/${id}`);
+      fireEvent.click(nextPokemonButton);
+    });
+  });
+});
+
+describe('10 - Changing to detail page', () => {
+  test('10.1 - The URL should change', () => {
+    pokemons.forEach(({ id, name }) => {
+      const history = createMemoryHistory();
+      history.push(`/pokemons/${id}`);
+      const { getByText } = render(
+        <Router history={history}>
+          <App />
+        </Router>,
+      );
+      const pokemonDetails = getByText(`${name} Details`);
+      expect(pokemonDetails).toBeInTheDocument();
+      expect(history.location.pathname).toBe(`/pokemons/${id}`);
+    });
+  });
+  test('10.2 - Clicking on "More Details redirects the page', () => {
+    const { getByText } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    pokemons.map(({ name }, index) => {
+      console.log(index, name);
+      for (let i = 0; i < index; i += 1) {
+        const nextPokemonButton = getByText('Próximo pokémon');
+        fireEvent.click(nextPokemonButton);
+      }
+      const moreDetail = getByText('More details');
+      fireEvent.click(moreDetail);
+      expect(getByText(`${name} Details`)).toBeInTheDocument();
+      fireEvent.click(getByText('Home'));
+    });
+  });
 });
