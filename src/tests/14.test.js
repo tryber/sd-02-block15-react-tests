@@ -1,8 +1,10 @@
 import React from 'react';
-import { cleanup, getByText } from '@testing-library/react';
+import { cleanup } from '@testing-library/react';
 import renderWithRouter from '../services/renderWithRouter';
 import allPokemons from '../services/pokedexDataTest';
 import App from '../App';
+
+afterEach(cleanup);
 
 describe('14.', () => {
   test('Pokedex details page show maps with locations of that pokemon', () => {
