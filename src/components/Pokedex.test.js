@@ -10,7 +10,6 @@ describe('testing Pokedex functionalities', () => {
         <App />
       </MemoryRouter>,
     );
-    console.log(queryAllByText(/Average weight/))
     expect(queryAllByText(/Average weight/).length).toBe(1);
   });
 });
