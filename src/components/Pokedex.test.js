@@ -4,6 +4,7 @@ import { render, cleanup, fireEvent } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import App from '../App';
 import Pokedex from './Pokedex';
+import FavoritePokemons from './FavoritePokemons'
 import pokemons from '../data';
 
 afterEach(cleanup);
@@ -34,6 +35,8 @@ const Pokemonfavorited = {
   148: false,
 };
 
+const arrayFavoritedpokemons = pokemons.filter(({ id }) => Pokemonfavorited[id]);
+const arrayNotFavoritedpokemons = pokemons.filter(({ id }) => !Pokemonfavorited[id]);
 
 test('2 - Pokedex shows only one pokemon each time', () => {
   const { getAllByText } = render(
@@ -351,5 +354,57 @@ describe('16 - favorited pokemons should be marked with a star', () => {
       }
       fireEvent.click(nextPokemonButton);
     });
+  });
+});
+
+describe('22 - Favorite pokemons page should render the favorite pokemons', () => {
+  test('22.1 - Showing only the favorited pokemons', () => {
+    const { getByText } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <FavoritePokemons
+          pokemons={arrayFavoritedpokemons}
+        />
+      </MemoryRouter>,
+    );
+    arrayFavoritedpokemons.forEach(({ name }) => {
+      expect(getByText(name)).toBeInTheDocument();
+    });
+  });
+  test('22.2 - Not showing the not favorited pokemons', () => {
+    const { queryByText } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <FavoritePokemons
+          pokemons={arrayFavoritedpokemons}
+        />
+      </MemoryRouter>,
+    );
+    arrayNotFavoritedpokemons.forEach(({ name }) => {
+      expect(queryByText(name)).not.toBeInTheDocument();
+    });
+  });
+});
+
+describe('23 - Render the 404 not Found page', () => {
+  test('23.1 - heading H2 with text "Page requested not found 😭"', () => {
+    const history = createMemoryHistory();
+    history.push('/wrong/location');
+    const { getByText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+    expect(getByText(/Page requested not found/)).toBeInTheDocument();
+    expect(getByText(/Page requested not found/).tagName).toBe('H2');
+  });
+  test('23.2 - Page Not Found shoul render an image', () => {
+    const history = createMemoryHistory();
+    history.push('/wrong/location');
+    const { getByAltText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+    const imgPikachu = getByAltText('Pikachu crying because the page requested was not found');
+    expect(imgPikachu.src).toBe('https://media.giphy.com/media/kNSeTs31XBZ3G/giphy.gif');
   });
 });

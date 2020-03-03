@@ -1,8 +1,10 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
-import { render, getAllByText, fireEvent } from '@testing-library/react';
+import { render, cleanup, fireEvent } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import App from './App';
+
+afterEach(cleanup);
 
 test('renders a reading with the text `Pokédex`', () => {
   const { getByText } = render(
@@ -68,4 +70,27 @@ test('18, 19 and 20 - testing header links', () => {
   expect(history.location.pathname).toBe('/about');
   fireEvent.click(getByText('Favorite Pokémons'));
   expect(history.location.pathname).toBe('/favorites');
+});
+
+describe('21 - Page about should have Pokedez infos', () => {
+  test('21.1 - must contain a heading with text "About Pokédex"', () => {
+    const { getByText } = renderWithRouter(<App />, {
+      route: '/about',
+    });
+    expect(getByText('About Pokédex')).toBeInTheDocument();
+    expect(getByText('About Pokédex').tagName).toBe('H2');
+  });
+  test('21.2 - The About Page should have two paragraphs', () => {
+    const { getByText } = renderWithRouter(<App />, {
+      route: '/about',
+    });
+    expect(getByText(/This application simulates a Pokédex, a digital encliclopedia containing all Pokémons/)).toBeInTheDocument();
+    expect(getByText(/One can filter Pokémons by type, and see more details for each one of them/)).toBeInTheDocument();
+  });
+  test('21.3 - Getting the right img path', () => {
+    const { getByAltText } = renderWithRouter(<App />, {
+      route: '/about',
+    });
+    expect(getByAltText('Pokédex').src).toBe('https://cdn.bulbagarden.net/upload/thumb/8/86/Gen_I_Pok%C3%A9dex.png/800px-Gen_I_Pok%C3%A9dex.png');
+  });
 });
