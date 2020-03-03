@@ -330,3 +330,26 @@ test('14 - The pokemon at detailed page should have ssetions with locations', ()
 test('15 - Clicking on star icon to make Pokemon favorite', () => {
   detailedExibition(15);
 });
+
+describe('16 - favorited pokemons should be marked with a star', () => {
+  test('Icon has to be a star and has an alt message', () => {
+    const { getByText, getByAltText, queryByAltText } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <Pokedex
+          pokemons={pokemons}
+          isPokemonFavoriteById={Pokemonfavorited}
+        />
+      </MemoryRouter>,
+    );
+    const nextPokemonButton = getByText('Próximo pokémon');
+    pokemons.forEach(({ name, id }) => {
+      if (Pokemonfavorited[id]) {
+        expect(getByAltText(`${name} is marked as favorite`)).toBeInTheDocument();
+        expect(getByAltText(`${name} is marked as favorite`).src).toBe('http://localhost/star-icon.svg');
+      } else {
+        expect(queryByAltText(`${name} is marked as favorite`)).not.toBeInTheDocument();
+      }
+      fireEvent.click(nextPokemonButton);
+    });
+  });
+});
