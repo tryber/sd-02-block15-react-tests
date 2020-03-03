@@ -6,8 +6,8 @@ import pokemons from '../data';
 
 afterEach(cleanup);
 
-describe('testing Pokedex renderization', () => {
-  it('02 - test if pokedex shows one pokemon at a time', () => {
+describe('02 - testing Pokedex renderization', () => {
+  it('test if pokedex shows one pokemon at a time', () => {
     const { queryAllByText } = render(
       <MemoryRouter>
         <App />
@@ -17,7 +17,7 @@ describe('testing Pokedex renderization', () => {
   });
 });
 
-describe('03 - testing button "Próximo pokémon', () => {
+describe('03 - testing button "Próximo pokémon"', () => {
   it('button should contain the text "Próximo pokémon', () => {
     const { getByText } = render(
       <MemoryRouter>
@@ -58,5 +58,16 @@ describe('03 - testing button "Próximo pokémon', () => {
       expect(getByText(name)).toBeInTheDocument();
       fireEvent.click(nextPokemonButton);
     });
+  });
+
+  it('when in the last pokemon, the button should render the first pokémon', () => {
+    const { getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const nextPokemonButton = getByText(/Próximo pokémon/);
+    pokemons.forEach(() => fireEvent.click(nextPokemonButton));
+    expect(getByText(pokemons[0].name)).toBeInTheDocument();
   });
 });
