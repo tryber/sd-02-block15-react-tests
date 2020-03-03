@@ -7,8 +7,8 @@ import pokemons from './data2';
 
 afterEach(cleanup);
 
-describe('Pokemon test 11 - 15', () => {
-  test('11, 12, 13, 14', () => {
+describe('Pokemon test 11 - 16', () => {
+  test('11, 12, 13, 14, 15, 16', () => {
     const history = createMemoryHistory();
     const {
       getByText, queryByLabelText, queryByText, queryAllByAltText, queryByAltText,
@@ -48,7 +48,11 @@ describe('Pokemon test 11 - 15', () => {
       expect(queryByLabelText('Pokémon favoritado?')).toBeInTheDocument();
       fireEvent.click(queryByLabelText('Pokémon favoritado?'));
       expect(queryByLabelText('Pokémon favoritado?').checked).toBeTruthy();
+      // 16
+      expect(queryByAltText(`${name} is marked as favorite`)).toBeInTheDocument();
+      expect(queryByAltText(`${name} is marked as favorite`).src).toBe('http://localhost/star-icon.svg');
       expect(JSON.parse(localStorage.getItem('favoritePokemonIds')).some((ele) => ele === pokemon.id)).toBeTruthy();
+      // 15
       fireEvent.click(queryByLabelText('Pokémon favoritado?'));
       expect(queryByLabelText('Pokémon favoritado?').checked).not.toBeTruthy();
       expect(JSON.parse(localStorage.getItem('favoritePokemonIds')).some((ele) => ele === pokemon.id)).not.toBeTruthy();
