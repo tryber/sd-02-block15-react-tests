@@ -5,11 +5,10 @@ import { render, cleanup, fireEvent } from '@testing-library/react';
 import FavoritePokemons from './components/FavoritePokemons';
 import App from './App';
 import pokemons from './data2';
-import { object } from 'prop-types';
 
 afterEach(cleanup);
 
-describe('test', () => {
+describe('18 - 23', () => {
   test('At the top of the application, there should be a fixed set of navigation links', () => {
     const history = createMemoryHistory();
     const { getByText } = render(
@@ -73,5 +72,16 @@ describe('test', () => {
     favorite.forEach((pokemon) => {
       expect(queryByText(pokemon.name)).toBeInTheDocument();
     });
+  });
+  test('23', () => {
+    const { queryByText, queryByAltText } = render(
+      <MemoryRouter initialEntries={['/NÂOAGUENTOMAISTESTE']}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(queryByText('Page requested not found')).toBeInTheDocument();
+    expect(queryByText('Page requested not found').tagName).toBe('H2');
+    expect(queryByAltText('Pikachu crying because the page requested was not found')).toBeInTheDocument();
+    expect(queryByAltText('Pikachu crying because the page requested was not found').src).toBe('https://media.giphy.com/media/kNSeTs31XBZ3G/giphy.gif');
   });
 });
