@@ -126,8 +126,10 @@ describe('Test #5', () => {
     pokemonMock.map((pokemon) => {
       const pokemonName = pokemon.name;
       const pokemonRenderName = getByTestId(/pokemon-name/i).innerHTML;
-      fireEvent.click(nextButton);
       expect(pokemonName).toBe(pokemonRenderName);
+      expect(getByText(pokemonName)).toBeInTheDocument();
+
+      fireEvent.click(nextButton);
     });
   });
   test('o texto do botão de resete deve ser "All" e após clicá-lo, a Pokédex deve voltar a circular por todos os pokémons', () => {
@@ -144,18 +146,60 @@ describe('Test #5', () => {
     fireEvent.click(fireButton);
     firePokemons.map((pokemon) => {
       const pokemonName = getByTestId(/pokemon-name/i).innerHTML;
-      fireEvent.click(nextButton);
 
+      expect(getByText(pokemon.name)).toBeInTheDocument();
       expect(pokemon.name).toBe(pokemonName);
+
+      fireEvent.click(nextButton);
     });
 
     fireEvent.click(buttonAll);
 
     pokemonMock.map((pokemon) => {
       const pokemonName = getByTestId(/pokemon-name/i).innerHTML;
-      fireEvent.click(nextButton);
 
+      expect(getByText(pokemon.name)).toBeInTheDocument();
       expect(pokemon.name).toBe(pokemonName);
+
+      fireEvent.click(nextButton);
+    });
+  });
+});
+
+describe('Test #6', () => {
+  test('A pokedex deve gerar dinamicamente um botao de filtro para cada tipo de pokemon', () => {
+    const { getAllByText, getByText } = renderWithRouter(<App />);
+    const allButton = getByText(/All/i);
+    const mockTypes = new Set(pokemonMock.map(({ type }) => type));
+
+    expect(allButton).toBeInTheDocument();
+
+    (Array.from(mockTypes)).map((type) => {
+      const curTypeButton = getAllByText(type)[1] || getByText(type);
+
+      expect(curTypeButton).toBeInTheDocument();
+    });
+  });
+});
+
+describe('Test #7', () => {
+  test('O botão de Próximo Pokémon deve ser desabilitado caso exista somente 1 pokémon filtrado', () => {
+    const { getAllByTestId, getByText, getAllByText } = renderWithRouter(<App />);
+    const buttonAll = getByText(/Próximo pokémon/);
+    const typeButtons = getAllByTestId(/pokemon-type-button/i);
+    let sizePokemonsArray = pokemonMock.length;
+
+    typeButtons.map(({ innerHTML }) => {
+      if (sizePokemonsArray === 1) {
+        expect(buttonAll).toBeInTheDocument();
+        expect(buttonAll.disabled).toBeTruthy();
+      } else {
+        expect(buttonAll).toBeInTheDocument();
+        expect(buttonAll.disabled).toBeFalsy();
+      }
+      fireEvent.click(getAllByText(innerHTML)[1] || getByText(innerHTML));
+
+      sizePokemonsArray = pokemonMock.filter(({ type }) => type === innerHTML).length;
     });
   });
 });
