@@ -2,7 +2,7 @@ import React from 'react';
 import './about.css';
 
 const About = () => (
-  <section>
+  <section data-testid="page-about">
     <h2>About Pokédex</h2>
     <section>
       <p>This application simulates a Pokédex, a digital encliclopedia containing all Pokémons </p>

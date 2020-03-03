@@ -42,7 +42,7 @@ class Pokedex extends React.Component {
     const pokemonTypes = this.fetchPokemonTypes();
 
     return (
-      <div data-testid="page-pokedex" className="pokedex-buttons-panel">
+      <div className="pokedex-buttons-panel">
         <Button
           onClick={() => this.filterPokemons('all')}
           className="filter-button"
@@ -69,7 +69,7 @@ class Pokedex extends React.Component {
     const pokemon = filteredPokemons[pokemonIndex];
 
     return (
-      <div className="pokedex">
+      <div data-testid="page-pokedex" className="pokedex">
         <h2>Encountered pokémons</h2>
         <Pokemon
           pokemon={pokemon}
