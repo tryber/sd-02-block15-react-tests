@@ -2,7 +2,7 @@ import React from 'react';
 import './not-found.css';
 
 const NotFound = () => (
-  <div className="not-found">
+  <div className="not-found" data-testid="page-notfound">
     <h2>
       Page requested not found
       <span role="img" aria-label="Crying emoji"> 😭 </span>
