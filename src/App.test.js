@@ -273,50 +273,7 @@ describe('Teste 9 - Rendering a nav bar', () => {
   });
 });
 
-const detailedExibition = (ex) => {
-  const {
-    getByText, getByAltText, queryByText, getAllByAltText, getByLabelText, queryByAltText,
-  } = render(
-    <MemoryRouter initialEntries={['/']}>
-      <App />
-    </MemoryRouter>,
-  );
-  fakePokemons.forEach(({
-    name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
-  }, index) => {
-    for (let i = 0; i < index; i += 1) {
-      const nextPokemonButton = getByText('Próximo pokémon');
-      fireEvent.click(nextPokemonButton);
-    }
-    const moreDetail = getByText('More details');
-    fireEvent.click(moreDetail);
-    if (ex === 14) {
-      expect(getByText(`Game Locations of ${name}`)).toBeInTheDocument();
-      expect(getByText(`Game Locations of ${name}`).tagName).toBe('H2');
-      expect(getAllByAltText(`${name} location`).length).toBe(foundAt.length);
-      for (let i = 0; i < foundAt.length; i += 1) {
-        const location = getAllByAltText(`${name} location`)[i];
-        expect(location.src).toBe(foundAt[i].map);
-        expect(getByText(foundAt[i].location)).toBeInTheDocument();
-      }
-    }
-    if (ex === 15) {
-      expect(getByLabelText('Pokémon favoritado?')).toBeInTheDocument();
-      const eMarcado = queryByAltText(`${name} is marked as favorite`);
-      if (eMarcado) {
-        fireEvent.click(getByLabelText('Pokémon favoritado?'));
-      }
-      expect(queryByAltText(`${name} is marked as favorite`)).not.toBeInTheDocument();
-      fireEvent.click(getByLabelText('Pokémon favoritado?'));
-      expect(queryByAltText(`${name} is marked as favorite`)).toBeInTheDocument();
-      fireEvent.click(getByLabelText('Pokémon favoritado?'));
-      expect(queryByAltText(`${name} is marked as favorite`)).not.toBeInTheDocument();
-    }
-    fireEvent.click(getByText('Home'));
-  });
-};
-
-describe('10 - Changing to detail page', () => {
+describe('Teste 10 - Changing to detail page', () => {
   test('10.1 and 10.2 - Clicking on More Detail" redirects the page and the URL should change', () => {
     const history = createMemoryHistory();
     const { getByText } = render(
@@ -337,18 +294,15 @@ describe('10 - Changing to detail page', () => {
   });
 });
 
-describe('11 - Detail Page should render name, type, average weight and image', () => {
+describe('Teste 11 - Detail Page should render name, type, average weight and image', () => {
   test('11.1 and 11.2 - testing name, type, average weight and image', () => {
-    const {
-      getByText, getByAltText, queryByText, getAllByAltText, getByLabelText, queryByAltText,
-    } = render(
+    const { getByText, getByAltText } = render(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>,
     );
     fakePokemons.forEach(({
-      name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
-    }, index) => {
+      name, type, averageWeight: { value, measurementUnit }, image }, index) => {
       for (let i = 0; i < index; i += 1) {
         const nextPokemonButton = getByText('Próximo pokémon');
         fireEvent.click(nextPokemonButton);
@@ -364,11 +318,9 @@ describe('11 - Detail Page should render name, type, average weight and image', 
   });
 });
 
-describe('12 - The pokemon at detailed page should not have a link to "More details"', () => {
+describe('Teste 12 - The pokemon at detailed page should not have a link to "More details"', () => {
   test('12.1 - Not finding a link to "More details"', () => {
-    const {
-      getByText, getByAltText, queryByText, getAllByAltText, getByLabelText, queryByAltText,
-    } = render(
+    const { getByText, queryByText } = render(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>,
@@ -388,7 +340,7 @@ describe('12 - The pokemon at detailed page should not have a link to "More deta
   });
 });
 
-describe('13 - The pokemon at detailed page should have a heading summary and a p', () => {
+describe('Teste 13 - The pokemon at detailed page should have a heading summary and a p', () => {
   test('13 - Heading and a paragraph', () => {
     const {
       getByText, getByAltText, queryByText, getAllByAltText, getByLabelText, queryByAltText,
@@ -415,7 +367,7 @@ describe('13 - The pokemon at detailed page should have a heading summary and a 
   });
 });
 
-describe('14 - The pokemon at detailed page should have sections with locations', () => {
+describe('Teste 14 - The pokemon at detailed page should have sections with locations', () => {
   test('Location sections', () => {
     const {
       getByText, getByAltText, queryByText, getAllByAltText, getByLabelText, queryByAltText,
@@ -446,7 +398,7 @@ describe('14 - The pokemon at detailed page should have sections with locations'
   });
 });
 
-describe('15 - Clicking on star icon to make Pokemon favorite', () => {
+describe('Teste 15 - Clicking on star icon to make Pokemon favorite', () => {
   test('', () => {
     const {
       getByText, getByAltText, queryByText, getAllByAltText, getByLabelText, queryByAltText,
@@ -564,7 +516,9 @@ describe('21 - Page about should have Pokedex infos', () => {
       route: '/about',
     });
     expect(getByText(/This application simulates a Pokédex, a digital encliclopedia containing all Pokémons/)).toBeInTheDocument();
+    expect(getByText(/This application simulates a Pokédex, a digital encliclopedia containing all Pokémons/).tagName).toBe('P');
     expect(getByText(/One can filter Pokémons by type, and see more details for each one of them/)).toBeInTheDocument();
+    expect(getByText(/One can filter Pokémons by type, and see more details for each one of them/).tagName).toBe('P');
   });
   test('21.3 - Getting the right img path', () => {
     const { getByAltText } = renderWithRouter(<App />, {
