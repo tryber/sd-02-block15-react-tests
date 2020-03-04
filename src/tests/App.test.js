@@ -164,3 +164,35 @@ test('6- Pokédex must generate, dinamically, a filter button for every pokémon
     }
   });
 });
+test('7- Button "Próximo Pokémon" must be disabled if the filtered list has only one pokémon', () => {
+  const { getByTestId, getByText } = render(
+    <MemoryRouter initialEntries={['/']}>
+      <App />
+    </MemoryRouter>,
+  );
+  const nextPokemonButton = getByText('Próximo pokémon');
+  const PokeType = ['Electric', 'Fire', 'Bug', 'Poison', 'Psychic', 'Normal', 'Dragon'];
+  PokeType.forEach((tipo) => {
+    const typeList = Pokemon.filter((data) => data.type === tipo);
+    const buttonType = getByTestId(tipo);
+    fireEvent.click(buttonType);
+    if (typeList.length === 1) {
+      expect(nextPokemonButton).toBeDisabled();
+    }
+  });
+});
+test('8- Pokedéx must exhibit name, type, averageweight and image from current pokémon', () => {
+  const { queryByAltText, queryByText, getByText } = render(
+    <MemoryRouter>
+      <App />
+    </MemoryRouter>,
+  );
+  const nextPokemonButton = getByText('Próximo pokémon');
+  Pokemon.forEach((poke) => {
+    const { value, measurementUnit } = poke.averageWeight;
+    expect(queryByText(`Average weight: ${value} ${measurementUnit}`)).toBeInTheDocument();
+    expect(queryByAltText(`${poke.name} sprite`)).toBeInTheDocument();
+    expect(Pokemon.some((elemen) => elemen.image === queryByAltText(`${poke.name} sprite`).src)).toBeTruthy();
+    fireEvent.click(nextPokemonButton);
+  });
+});
