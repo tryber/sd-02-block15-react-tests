@@ -182,4 +182,43 @@ describe('07 - testing if the "Próximo pokémon" button is disabled', () => {
   });
 });
 
-describe
+describe('08 - Pokedex must show the pokemons\' name, type, average weight and photo', () => {
+  it('average weight must be shown in the format "Average weight: <value> <measurementUnit>"', () => {
+    const {
+      getByAltText, queryByText, getByText, getAllByText,
+    } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+
+    pokemons.forEach(({
+      name, type, averageWeight, image,
+    }) => {
+      expect(getByText(name)).toBeInTheDocument();
+      expect(getAllByText(type)[0]).toBeInTheDocument();
+      expect(queryByText(`Average weight: ${averageWeight.value} ${averageWeight.measurementUnit}`)).toBeInTheDocument();
+      expect(getByAltText(`${name} sprite`)).toBeInTheDocument();
+      fireEvent.click(getByText(/Próximo pokémon/));
+    });
+  });
+
+  it('image has to be the "src" attribute with URL and the "alt" attribute', () => {
+    const { getByAltText, getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    pokemons.forEach(({ name, image }) => {
+      expect(getByAltText(`${name} sprite`)).toBeInTheDocument();
+      expect(getByAltText(`${name} sprite`).src).toEqual(image);
+      fireEvent.click(getByText(/Próximo pokémon/));
+    });
+  });
+});
+
+describe('', () => {
+  it('', () => {
+
+  });
+});
