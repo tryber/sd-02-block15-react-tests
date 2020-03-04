@@ -3,6 +3,8 @@ import { cleanup, fireEvent } from '@testing-library/react';
 import renderWithRouter from '../services/renderWithRouter';
 import App from '../App';
 
+afterEach(cleanup);
+
 describe('20.', () => {
   test('When clicked in favorite Pokemons text, the route changed to favorite component (/favorites)', () => {
     const { queryByText, history } = renderWithRouter(<App />);
