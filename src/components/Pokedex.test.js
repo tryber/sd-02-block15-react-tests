@@ -108,3 +108,51 @@ describe('04 - Pokedex must have filter buttons', () => {
     });
   });
 });
+
+describe('05 - Pokedex must have a button for reset filter', () => {
+  it('the button text should be "All"', () => {
+    const { getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const allPokemonsButton = getByText(/All/);
+    expect(allPokemonsButton).toBeInTheDocument();
+    expect(allPokemonsButton.tagName).toBe('BUTTON');
+    expect(allPokemonsButton.innerHTML).toMatch('All');
+  });
+
+  it('when click it, pokedex must circulate through all pokemons', () => {
+    const { getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const allPokemonsButton = getByText(/All/);
+    const nextPokemonButton = getByText(/Próximo pokémon/);
+    fireEvent.click(allPokemonsButton);
+    pokemons.forEach(({ name }) => {
+      expect(getByText(name)).toBeInTheDocument();
+      fireEvent.click(nextPokemonButton);
+    });
+  });
+
+  it('when loading the page, "all" should be selected', () => {
+    const { getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const nextPokemonButton = getByText('Próximo pokémon');
+    pokemons.forEach(({ name }) => {
+      expect(getByText(name)).toBeInTheDocument();
+      fireEvent.click(nextPokemonButton);
+    });
+  });
+});
+
+describe('The Pokédex should dynamically generate a filter button for each type of Pokémon', () => {
+  it('testing the Pokedex types buttons and the render of button "All"', () => {
+
+  });
+});
