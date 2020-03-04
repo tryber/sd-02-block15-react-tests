@@ -54,8 +54,6 @@ test('4 - Pokedex need filters to map each pokemon by type', () => {
   pokemons.forEach((pokemon) => {
     const { type, name } = pokemon; 
     expect(getByText(type, {selector: 'button'})).toBeInTheDocument();
-    if (buttonNxtPkm)
-    fireEvent.click(buttonNxtPkm);
-    expect()
+    console.log(pokemon.type)
   })
 })
