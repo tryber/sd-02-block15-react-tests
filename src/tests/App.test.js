@@ -131,10 +131,14 @@ describe('5- Pokédex must have a button to reset filters', () => {
   });
   test('5.3- When page renders, the selected filter must be "all"', () => {
     const { getByText } = render(
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
     const nextPokemonButton = getByText('Próximo pokémon');
+    Pokemon.forEach((data) => {
+      expect(getByText(data.name)).toBeInTheDocument();
+      fireEvent.click(nextPokemonButton);
+    });
   });
 });
