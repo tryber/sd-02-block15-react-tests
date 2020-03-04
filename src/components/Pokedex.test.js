@@ -8,7 +8,7 @@ import pokemonsMock from '../services/mockPkmnData';
 afterEach(cleanup);
 
 describe('Pokemon app.js tests', () => {
-  test('1 - Ao carregar a aplicação no caminho de URL “/”, a página principal da Pokédex deve ser mostrada.', () => {
+  test('1 - Ao carregar a aplicação no caminho de URL “/”, a página principal da...', () => {
     const { getByText } = render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -28,7 +28,7 @@ describe('Pokemon app.js tests', () => {
     expect(weight.length).toBe(1);
   });
 
-  test('3 - Ao apertar o botão de próximo, a página deve exibir o próximo pokémon da lista', () => {
+  test('3 - Ao apertar o botão de próximo, a página deve exibir o próximo pokémon...', () => {
     const { getByText } = render(
       <MemoryRouter>
         <App />
@@ -93,7 +93,7 @@ describe('Pokemon app.js tests', () => {
     expect(getByText(pokemonsMock[1].name)).toBeInTheDocument();
   });
 
-  test('6 - A Pokédex deve gerar, dinamicamente, um botão de filtro para cada tipo de pokémon', () => {
+  test('6 - A Pokédex deve gerar, dinamicamente, um botão de filtro para cada tipo...', () => {
     const { getByText, getAllByText } = render(
       <MemoryRouter>
         <App />
@@ -105,6 +105,31 @@ describe('Pokemon app.js tests', () => {
       expect(allBtn).toBeInTheDocument();
       const typeBtn = getAllByText(type)[1] || getByText(type);
       expect(typeBtn).toBeInTheDocument();
+    });
+  });
+
+  test('7 - O botão de Próximo pokémon deve ser desabilitado se a lista filtrada...', () => {
+    const { getByText, getAllByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const nextBtn = getByText(/Próximo pokémon/i);
+    expect(nextBtn).toBeInTheDocument();
+    const uniqueType = [...new Set(pokemonsMock.reduce((acum, { type }) => [...acum, type], []))];
+    uniqueType.forEach((item) => {
+      const typeBtn = getAllByText(item)[1] || getByText(item);
+      fireEvent.click(typeBtn);
+      let arrCont = [];
+      pokemonsMock.filter(({ type }) => {
+        if (type === item) {
+          arrCont.push(item);
+        }
+      });
+      arrCont = arrCont.length;
+      if (arrCont === 1) {
+        expect(nextBtn.disabled).toBeTruthy();
+      }
     });
   });
 });
