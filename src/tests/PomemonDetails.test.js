@@ -94,15 +94,14 @@ describe('Test #15', () => {
     expect(checkboxContainer).toBeInTheDocument();
     expect(checkboxContainer.checked).toBeFalsy();
 
-    if (!checkboxContainer.checked) {
-      fireEvent.click(checkboxContainer);
+    fireEvent.click(checkboxContainer);
 
-      expect(checkboxContainer.checked).toBeTruthy();
-    } else {
-      fireEvent.click(checkboxContainer);
+    expect(checkboxContainer.checked).toBeTruthy();
 
-      expect(checkboxContainer.checked).toBeFalsy();
-    }
+    fireEvent.click(checkboxContainer);
+
+    expect(checkboxContainer.checked).toBeFalsy();
+
 
     expect(checkboxContainer.parentNode.tagName).toBe('LABEL');
     expect(checkboxContainer.parentNode.innerHTML).toMatch('Pokémon favoritado?');
@@ -112,20 +111,33 @@ describe('Test #15', () => {
 describe('Test #16', () => {
   test('', () => {
     const {
-      getByText, history, getAllByRole, getByRole,
+      queryByText, history, getAllByRole, getByRole,
     } = renderWithRouter(<App />);
-    changePage(getByText);
+    changePage(queryByText);
     testDetailsRoute(history.location.pathname);
 
     const checkboxContainer = getByRole('checkbox');
 
-    if (checkboxContainer.checked) {
-      const { src, alt, tagName } = getAllByRole('img').filter((img) => img.src === 'http://localhost/star-icon.svg')[0];
+    fireEvent.click(checkboxContainer);
 
-      expect(checkboxContainer.checked).toBeTruthy();
-      expect(tagName).toBe('IMG');
-      expect(src).toMatch(/\/star-icon.svg/i);
-      expect(alt).toBe(`${pokemonMock[0].name} is marked as favorite`);
-    }
+    const { src, alt, tagName } = getAllByRole('img').filter((img) => img.src === 'http://localhost/star-icon.svg')[0];
+
+    expect(checkboxContainer.checked).toBeTruthy();
+    expect(tagName).toBe('IMG');
+    expect(src).toMatch(/\/star-icon.svg/i);
+    expect(alt).toBe(`${pokemonMock[0].name} is marked as favorite`);
+
+    fireEvent.click(checkboxContainer);
+
+    expect(checkboxContainer.checked).toBeFalsy();
+    expect(queryByText(alt)).toBeNull();
+    expect(queryByText(src)).toBeNull();
+
+  });
+});
+
+describe('Test #17', () => {
+  test('', () => {
+
   });
 });
