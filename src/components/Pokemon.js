@@ -17,12 +17,12 @@ class Pokemon extends React.Component {
     return (
       <div className="pokemon">
         <div className="pokemon-overview">
-          <p>{name}</p>
-          <p>{type}</p>
+          <p data-testid="pokemon-name">{name}</p>
+          <p data-testid="pokemon-type">{type}</p>
           <p>{`Average weight: ${value} ${measurementUnit}`}</p>
           {showDetailsLink && <Link to={`pokemons/${id}`}>More details</Link>}
         </div>
-        <img src={image} alt={`${name} sprite`} />
+        <img data-testid="pokemon-image" src={image} alt={`${name} sprite`} />
         {isFavorite && (
           <img
             className="favorite-icon"
