@@ -58,11 +58,82 @@ describe('3 - Testing "Próximo pokémon" button', () => {
 });
 
 describe('4 - The Pokédex must contain filter buttons', () => {
-  it('The button text must be the type name, p. ex. "Psychic"', () => expect().toBe(String));
-  const { getAllByText, getByText } = render(
+  it('when type of pokemon is selected, pokedex must show only the respective pokemons', () => {
+    const { getByTestId, getAllByText, getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const nextPokemonBtn = getByText(/Próximo pokémon/);
+    pokemons.forEach(({ type }) => {
+      expect(getByTestId(type)).toBeInTheDocument();
+      fireEvent.click(getByTestId(type));
+      expect(getAllByText(type).length).toEqual(2);
+      const pokemonsTypes = pokemons.filter((pokemon) => pokemon.type === type);
+      pokemonsTypes.forEach((pokemon) => {
+        expect(getByText(pokemon.name)).toBeInTheDocument();
+        if (pokemonsTypes.length > 1) {
+          expect(getByText(pokemon.name)).toBeInTheDocument();
+          fireEvent.click(nextPokemonBtn);
+        }
+      });
+    });
+  });
+});
+
+it('The button text must be the type name, p. ex. "Psychic"', () => {
+  const { getByTestId } = render(
     <MemoryRouter>
       <App />
     </MemoryRouter>,
   );
-  const type = ['Fire', 'Psychic', 'Electric', 'Normal', 'Dragon', 'Bug', 'Poison'];
+  pokemons.forEach(({ type }) => {
+    fireEvent.click(getByTestId(type));
+    expect(getByTestId(type).innerHTML).toMatch(type);
+  });
+});
+
+describe('5 - The Pokédex must contain a button to reset the filter', () => {
+  it('The button text must be All', () => {
+    const { getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const allPokemons = getByText(/All/);
+    const nextPokemonBtn = getByText(/Próximo pokémon/);
+
+    expect(nextPokemonBtn).toBeInTheDocument();
+    expect(allPokemons.tagName).toBe('BUTTON');
+    expect(allPokemons.innerHTML).toMatch('All');
+  });
+
+  it('After clicking it, the Pokédex must circulate all pokémons again', () => {
+    const { getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const allPokemonsBtn = getByText(/All/);
+    const nextPokemonBtn = getByText(/Próximo pokémon/);
+    fireEvent.click(allPokemonsBtn);
+    pokemons.forEach(({ name }) => {
+      expect(getByText(name)).toBeInTheDocument();
+      fireEvent.click(nextPokemonBtn);
+    });
+  });
+
+  it('When the page loads, the selected filter must be All', () => {
+    const { getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+
+    const nextPokemonButton = getByText('Próximo pokémon');
+    pokemons.forEach(({ name }) => {
+      expect(getByText(name)).toBeInTheDocument();
+      fireEvent.click(nextPokemonButton);
+    });
+  });
 });
