@@ -13,6 +13,7 @@ class Locations extends React.Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     fetch('https://pokeapi.co/api/v2/ability/?offset=20&limit=20')
       .then((resolve) => resolve.json())
       .then(({ results, count }) => this.setState({

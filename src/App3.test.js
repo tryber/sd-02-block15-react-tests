@@ -20,7 +20,7 @@ describe('Pokemon test 11 - 16', () => {
 
     pokemons.forEach((pokemon, index) => {
       const {
-        name, summary, foundAt, image, type, averageWeight: { value, measurementUnit },
+        name,id, summary, foundAt, image, type, averageWeight: { value, measurementUnit },
       } = pokemon;
       fireEvent.click(queryByText('More details'));
       // 11
@@ -51,11 +51,11 @@ describe('Pokemon test 11 - 16', () => {
       // 16
       expect(queryByAltText(`${name} is marked as favorite`)).toBeInTheDocument();
       expect(queryByAltText(`${name} is marked as favorite`).src).toBe('http://localhost/star-icon.svg');
-      expect(JSON.parse(localStorage.getItem('favoritePokemonIds')).some((ele) => ele === pokemon.id)).toBeTruthy();
+      expect(JSON.parse(localStorage.getItem('favoritePokemonIds')).some((ele) => ele === id)).toBeTruthy();
       // 15
       fireEvent.click(queryByLabelText('Pokémon favoritado?'));
       expect(queryByLabelText('Pokémon favoritado?').checked).not.toBeTruthy();
-      expect(JSON.parse(localStorage.getItem('favoritePokemonIds')).some((ele) => ele === pokemon.id)).not.toBeTruthy();
+      expect(JSON.parse(localStorage.getItem('favoritePokemonIds')).some((ele) => ele === id)).not.toBeTruthy();
       history.push('/');
       for (let i = 0; i < index + 1; i += 1) {
         fireEvent.click(queryByText('Próximo pokémon'));

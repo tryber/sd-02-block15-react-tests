@@ -17,7 +17,6 @@ class Generations extends React.Component {
 
   render() {
     const { arrResults } = this.state;
-    console.log(arrResults);
     return (
       <div>
         {arrResults.map(({ name, url }, index) => (
