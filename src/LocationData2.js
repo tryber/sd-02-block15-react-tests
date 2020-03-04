@@ -1,0 +1,22 @@
+const arrResults = [
+  'water-veil',
+  'magnet-pull',
+  'soundproof',
+  'rain-dish',
+  'sand-stream',
+  'pressure',
+  'thick-fat',
+  'early-bird',
+  'flame-body',
+  'run-away',
+  'keen-eye',
+  'hyper-cutter',
+  'pickup',
+  'truant',
+  'hustle',
+  'cute-charm',
+  'plus',
+  'minus',
+  'forecast',
+  'sticky-hold'];
+export default arrResults;
