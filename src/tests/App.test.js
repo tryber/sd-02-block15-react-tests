@@ -108,8 +108,8 @@ describe.skip('4- Pokedéx must contain filter buttons', () => {
     });
   });
 });
-describe('5- Pokédex must have a button to reset filters', () => {
-  test.skip("5.1- Button's text must be 'All'", () => {
+describe.skip('5- Pokédex must have a button to reset filters', () => {
+  test("5.1- Button's text must be 'All'", () => {
     const { getByTestId } = render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -118,7 +118,7 @@ describe('5- Pokédex must have a button to reset filters', () => {
     const resetButton = getByTestId('All');
     expect(resetButton.innerHTML).toEqual('All');
   });
-  test.skip('5.2- After clicking it, Pokédex must cicle around all pokémons', () => {
+  test('5.2- After clicking it, Pokédex must cicle around all pokémons', () => {
     const { getByTestId } = render(
       <MemoryRouter initialEntries={['/']}>
         <App />
@@ -140,5 +140,27 @@ describe('5- Pokédex must have a button to reset filters', () => {
       expect(getByText(data.name)).toBeInTheDocument();
       fireEvent.click(nextPokemonButton);
     });
+  });
+});
+test('6- Pokédex must generate, dinamically, a filter button for every pokémon type', () => {
+  const { getByTestId, getByText } = render(
+    <MemoryRouter initialEntries={['/']}>
+      <App />
+    </MemoryRouter>,
+  );
+  const PokeTypeList = ['All', 'Electric', 'Fire', 'Bug', 'Poison', 'Psychic', 'Normal', 'Dragon'];
+  const nextPokemonButton = getByText('Próximo pokémon');
+  for (let i = 0; i < Pokemon.length; i += 1) {
+    expect(getByText(Pokemon[i].name)).toBeInTheDocument();
+    fireEvent.click(nextPokemonButton);
+  }
+  PokeTypeList.forEach((tipo) => {
+    const buttonType = getByTestId(tipo);
+    const typeList = Pokemon.filter((poketype) => poketype.type === tipo);
+    fireEvent.click(buttonType);
+    for (let i = 0; i < typeList.length; i += 1) {
+      expect(getByText(typeList[i].name)).toBeInTheDocument();
+      fireEvent.click(nextPokemonButton);
+    }
   });
 });
