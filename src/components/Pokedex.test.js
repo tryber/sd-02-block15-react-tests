@@ -151,8 +151,18 @@ describe('05 - Pokedex must have a button for reset filter', () => {
   });
 });
 
-describe('The Pokédex should dynamically generate a filter button for each type of Pokémon', () => {
+describe('06 - The Pokédex should dynamically generate a filter button for each type of Pokémon', () => {
   it('testing the Pokedex types buttons and the render of button "All"', () => {
-
+    const { getAllByTestId, getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const pokemonsTypes = [...new Set(pokemons.map((pokemon) => pokemon.type))];
+    expect(getByText('All')).toBeInTheDocument();
+    expect(getByText('All').tagName).toBe('BUTTON');
+    pokemonsTypes.forEach((type) => {
+      expect(getAllByTestId(type).length).toEqual(1);
+    });
   });
 });
