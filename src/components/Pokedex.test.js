@@ -217,7 +217,23 @@ describe('08 - Pokedex must show the pokemons\' name, type, average weight and p
   });
 });
 
-describe('', () => {
+describe('09 - pokemon card should have a navigation link to it details page', () => {
+  it('link should have the URL "/pokemons/<id>" with the pokemon respective id', () => {
+    const { getByAltText, getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    pokemons.forEach(({ id }) => {
+      const moreDetails = getByText('More details');
+      expect(moreDetails.tagName).toBe('A');
+      expect(moreDetails.href).toEqual(`http://localhost/pokemons/${id}`);
+      fireEvent.click(getByText(/Próximo pokémon/));
+    });
+  });
+});
+
+describe('10 -', () => {
   it('', () => {
 
   });
