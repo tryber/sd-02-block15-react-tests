@@ -2,12 +2,11 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { cleanup, fireEvent, render } from '@testing-library/react';
 import App from '../App';
-import Pokedex from './Pokedex';
 import pokemonsMock from '../services/mockPkmnData';
 
 afterEach(cleanup);
 
-describe('Pokemon app.js tests', () => {
+describe('Pokemon Pokedex.js tests', () => {
   test('1 - Ao carregar a aplicação no caminho de URL “/”, a página principal da...', () => {
     const { getByText } = render(
       <MemoryRouter initialEntries={['/']}>
