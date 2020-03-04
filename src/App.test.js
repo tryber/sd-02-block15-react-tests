@@ -113,7 +113,7 @@ const pokemonsList = [
 const sameTypePokemonList = [
   {
     id: 1,
-    name: 'Raivoso',
+    name: 'Pikachu',
     type: 'Electric',
     averageWeight: {
       value: '6.0',
@@ -135,7 +135,7 @@ const sameTypePokemonList = [
   },
   {
     id: 2,
-    name: 'Esquentadinho',
+    name: 'Charmander',
     type: 'Electric',
     averageWeight: {
       value: '8.5',
@@ -165,7 +165,7 @@ const sameTypePokemonList = [
   },
   {
     id: 3,
-    name: 'Pedroso',
+    name: 'Caterpie',
     type: 'Electric',
     averageWeight: {
       value: '2.9',
@@ -195,7 +195,7 @@ const sameTypePokemonList = [
   },
   {
     id: 4,
-    name: 'George',
+    name: 'Ekans',
     type: 'Electric',
     averageWeight: {
       value: '6.9',
