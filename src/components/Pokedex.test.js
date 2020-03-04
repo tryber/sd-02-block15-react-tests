@@ -8,7 +8,6 @@ import pokemonsMock from '../services/mockPkmnData';
 afterEach(cleanup);
 
 describe('Pokemon app.js tests', () => {
-
   test('1 - Ao carregar a aplicação no caminho de URL “/”, a página principal da Pokédex deve ser mostrada.', () => {
     const { getByText } = render(
       <MemoryRouter initialEntries={['/']}>
@@ -92,5 +91,20 @@ describe('Pokemon app.js tests', () => {
     });
     fireEvent.click(nextBtn);
     expect(getByText(pokemonsMock[1].name)).toBeInTheDocument();
+  });
+
+  test('6 - A Pokédex deve gerar, dinamicamente, um botão de filtro para cada tipo de pokémon', () => {
+    const { getByText, getAllByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const allBtn = getByText(/All/i);
+    const uniqueType = [...new Set(pokemonsMock.reduce((acum, { type }) => [...acum, type], []))];
+    uniqueType.forEach((type) => {
+      expect(allBtn).toBeInTheDocument();
+      const typeBtn = getAllByText(type)[1] || getByText(type);
+      expect(typeBtn).toBeInTheDocument();
+    });
   });
 });
