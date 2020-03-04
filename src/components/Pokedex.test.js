@@ -18,7 +18,7 @@ describe('02 - testing Pokedex renderization', () => {
 });
 
 describe('03 - testing button "Próximo pokémon"', () => {
-  it('button should contain the text "Próximo pokémon', () => {
+  it('button should contain the text "Próximo pokémon"', () => {
     const { getByText } = render(
       <MemoryRouter>
         <App />
@@ -166,3 +166,20 @@ describe('06 - The Pokédex should dynamically generate a filter button for each
     });
   });
 });
+
+describe('07 - testing if the "Próximo pokémon" button is disabled', () => {
+  it('The "Próximo pokémon" button should be disabled if the filtered list of Pokémon has only one Pokémon', () => {
+    const { getByTestId, getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    pokemons.forEach(({ type }) => {
+      const pokeTypes = pokemons.filter((pokemon) => pokemon.type === type);
+      fireEvent.click(getByTestId(type));
+      if (pokeTypes.length <= 1) expect(getByText(/Próximo pokémon/).disabled).toBe(true);
+    });
+  });
+});
+
+describe
