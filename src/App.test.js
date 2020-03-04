@@ -37,7 +37,7 @@ test('Renders a reading with the text `Pokédex`', () => {
   expect(heading).toBeInTheDocument();
 });
 
-describe('Teste 1', () => {
+describe('Teste 1 - Showing the pokedéx', () => {
   test('1.1 - shows the Pokedéx when the route is `/`', () => {
     const { getByText } = render(
       <MemoryRouter initialEntries={['/']}>
@@ -48,7 +48,7 @@ describe('Teste 1', () => {
   });
 });
 
-describe('Teste 2', () => {
+describe('Teste 2 - Only one pokémon each page', () => {
   test('2.1 - Pokedex shows only one pokemon each time', () => {
     const { getAllByText } = render(
       <MemoryRouter initialEntries={['/']}>
@@ -202,7 +202,10 @@ describe('Teste 7 - Button disabled if only one Pokemon', () => {
   test('7.1 - Button disabled if only one Pokemon', () => {
     const { getByText } = render(
       <MemoryRouter initialEntries={['/']}>
-        <App />
+        <Pokedex
+          pokemons={fakePokemons}
+          isPokemonFavoriteById={booleanFavoritedPokemons}
+        />
       </MemoryRouter>,
     );
     const nextPokemonButton = getByText('Próximo pokémon');
@@ -266,6 +269,212 @@ describe('Teste 9 - Rendering a nav bar', () => {
       expect(moreDetail).toBeInTheDocument();
       expect(moreDetail.href).toBe(`http://localhost/pokemons/${id}`);
       fireEvent.click(nextPokemonButton);
+    });
+  });
+});
+
+const detailedExibition = (ex) => {
+  const {
+    getByText, getByAltText, queryByText, getAllByAltText, getByLabelText, queryByAltText,
+  } = render(
+    <MemoryRouter initialEntries={['/']}>
+      <App />
+    </MemoryRouter>,
+  );
+  fakePokemons.forEach(({
+    name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
+  }, index) => {
+    for (let i = 0; i < index; i += 1) {
+      const nextPokemonButton = getByText('Próximo pokémon');
+      fireEvent.click(nextPokemonButton);
+    }
+    const moreDetail = getByText('More details');
+    fireEvent.click(moreDetail);
+    if (ex === 14) {
+      expect(getByText(`Game Locations of ${name}`)).toBeInTheDocument();
+      expect(getByText(`Game Locations of ${name}`).tagName).toBe('H2');
+      expect(getAllByAltText(`${name} location`).length).toBe(foundAt.length);
+      for (let i = 0; i < foundAt.length; i += 1) {
+        const location = getAllByAltText(`${name} location`)[i];
+        expect(location.src).toBe(foundAt[i].map);
+        expect(getByText(foundAt[i].location)).toBeInTheDocument();
+      }
+    }
+    if (ex === 15) {
+      expect(getByLabelText('Pokémon favoritado?')).toBeInTheDocument();
+      const eMarcado = queryByAltText(`${name} is marked as favorite`);
+      if (eMarcado) {
+        fireEvent.click(getByLabelText('Pokémon favoritado?'));
+      }
+      expect(queryByAltText(`${name} is marked as favorite`)).not.toBeInTheDocument();
+      fireEvent.click(getByLabelText('Pokémon favoritado?'));
+      expect(queryByAltText(`${name} is marked as favorite`)).toBeInTheDocument();
+      fireEvent.click(getByLabelText('Pokémon favoritado?'));
+      expect(queryByAltText(`${name} is marked as favorite`)).not.toBeInTheDocument();
+    }
+    fireEvent.click(getByText('Home'));
+  });
+};
+
+describe('10 - Changing to detail page', () => {
+  test('10.1 and 10.2 - Clicking on More Detail" redirects the page and the URL should change', () => {
+    const history = createMemoryHistory();
+    const { getByText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+    fakePokemons.forEach(({ id, name }, index) => {
+      for (let i = 0; i < index; i += 1) {
+        fireEvent.click(getByText('Próximo pokémon'));
+      }
+      expect(history.location.pathname).toBe('/');
+      fireEvent.click(getByText('More details'));
+      expect(history.location.pathname).toBe(`/pokemons/${id}`);
+      expect(getByText(`${name} Details`)).toBeInTheDocument();
+      fireEvent.click(getByText('Home'));
+    });
+  });
+});
+
+describe('11 - Detail Page should render name, type, average weight and image', () => {
+  test('11.1 and 11.2 - testing name, type, average weight and image', () => {
+    const {
+      getByText, getByAltText, queryByText, getAllByAltText, getByLabelText, queryByAltText,
+    } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    fakePokemons.forEach(({
+      name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
+    }, index) => {
+      for (let i = 0; i < index; i += 1) {
+        const nextPokemonButton = getByText('Próximo pokémon');
+        fireEvent.click(nextPokemonButton);
+      }
+      const moreDetail = getByText('More details');
+      fireEvent.click(moreDetail);
+      expect(getByText(name)).toBeInTheDocument();
+      expect(getByText(type)).toBeInTheDocument();
+      expect(getByText(`Average weight: ${value} ${measurementUnit}`)).toBeInTheDocument();
+      expect(getByAltText(`${name} sprite`).src).toBe(image);
+      fireEvent.click(getByText('Home'));
+    });
+  });
+});
+
+describe('12 - The pokemon at detailed page should not have a link to "More details"', () => {
+  test('12.1 - Not finding a link to "More details"', () => {
+    const {
+      getByText, getByAltText, queryByText, getAllByAltText, getByLabelText, queryByAltText,
+    } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    fakePokemons.forEach(({
+      name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
+    }, index) => {
+      for (let i = 0; i < index; i += 1) {
+        const nextPokemonButton = getByText('Próximo pokémon');
+        fireEvent.click(nextPokemonButton);
+      }
+      const moreDetail = getByText('More details');
+      fireEvent.click(moreDetail);
+      expect(queryByText('More details')).not.toBeInTheDocument();
+      fireEvent.click(getByText('Home'));
+    });
+  });
+});
+
+describe('13 - The pokemon at detailed page should have a heading summary and a p', () => {
+  test('13 - Heading and a paragraph', () => {
+    const {
+      getByText, getByAltText, queryByText, getAllByAltText, getByLabelText, queryByAltText,
+    } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    fakePokemons.forEach(({
+      name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
+    }, index) => {
+      for (let i = 0; i < index; i += 1) {
+        const nextPokemonButton = getByText('Próximo pokémon');
+        fireEvent.click(nextPokemonButton);
+      }
+      const moreDetail = getByText('More details');
+      fireEvent.click(moreDetail);
+      expect(getByText('Summary')).toBeInTheDocument();
+      expect(getByText('Summary').tagName).toBe('H2');
+      expect(getByText(summary)).toBeInTheDocument();
+      expect(getByText(summary).tagName).toBe('P');
+      fireEvent.click(getByText('Home'));
+    });
+  });
+});
+
+describe('14 - The pokemon at detailed page should have sections with locations', () => {
+  test('Location sections', () => {
+    const {
+      getByText, getByAltText, queryByText, getAllByAltText, getByLabelText, queryByAltText,
+    } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    fakePokemons.forEach(({
+      name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
+    }, index) => {
+      for (let i = 0; i < index; i += 1) {
+        const nextPokemonButton = getByText('Próximo pokémon');
+        fireEvent.click(nextPokemonButton);
+      }
+      const moreDetail = getByText('More details');
+      fireEvent.click(moreDetail);
+      expect(getByText(`Game Locations of ${name}`)).toBeInTheDocument();
+      expect(getByText(`Game Locations of ${name}`).tagName).toBe('H2');
+      expect(getAllByAltText(`${name} location`).length).toBe(foundAt.length);
+      for (let i = 0; i < foundAt.length; i += 1) {
+        const location = getAllByAltText(`${name} location`)[i];
+        expect(location.src).toBe(foundAt[i].map);
+        expect(getByText(foundAt[i].location)).toBeInTheDocument();
+      }
+      fireEvent.click(getByText('Home'));
+    });
+  });
+});
+
+describe('15 - Clicking on star icon to make Pokemon favorite', () => {
+  test('', () => {
+    const {
+      getByText, getByAltText, queryByText, getAllByAltText, getByLabelText, queryByAltText,
+    } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    fakePokemons.forEach(({
+      name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
+    }, index) => {
+      for (let i = 0; i < index; i += 1) {
+        const nextPokemonButton = getByText('Próximo pokémon');
+        fireEvent.click(nextPokemonButton);
+      }
+      const moreDetail = getByText('More details');
+      fireEvent.click(moreDetail);
+      expect(getByLabelText('Pokémon favoritado?')).toBeInTheDocument();
+      const eMarcado = queryByAltText(`${name} is marked as favorite`);
+      if (eMarcado) {
+        fireEvent.click(getByLabelText('Pokémon favoritado?'));
+      }
+      expect(queryByAltText(`${name} is marked as favorite`)).not.toBeInTheDocument();
+      fireEvent.click(getByLabelText('Pokémon favoritado?'));
+      expect(queryByAltText(`${name} is marked as favorite`)).toBeInTheDocument();
+      fireEvent.click(getByLabelText('Pokémon favoritado?'));
+      expect(queryByAltText(`${name} is marked as favorite`)).not.toBeInTheDocument();
+      fireEvent.click(getByText('Home'));
     });
   });
 });
