@@ -35,6 +35,7 @@ describe('Pokemon test 6 - 10', () => {
       if (contagem.length === 1) {
         expect(getByText(contagem[0].name)).toBeInTheDocument();
         fireEvent.click(getByText(/Próximo pokémon/));
+        expect(getByText(/Próximo pokémon/).disabled).toBeTruthy();
         expect(getByText(contagem[0].name)).toBeInTheDocument();
       }
     });
