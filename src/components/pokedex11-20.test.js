@@ -1,11 +1,48 @@
-// describe('11 - The Pokémon details page should display the name, type, average weight and image of the Pokémon displayed', () => {
-//   it('The average weight of the Pokémon must be displayed with text in the format Average weight:, where and are, respectively, the average weight of the Pokémon and its unit of measurement');
-//   it('A imagem deve conter um atributo src com a URL da imagem do pokémon. A imagem deverá ter também um atributo alt com o nome do pokémon');
-// });
+import React from 'react';
+import { Router, MemoryRouter } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
+import { render, cleanup, fireEvent } from '@testing-library/react';
+import pokemons from '../services/pokemons';
+import App from '../App';
 
-// describe('12 - The Pokémon displayed on the details page must not contain a navigation link to display details of this Pokémon');
+afterEach(cleanup);
 
-// describe('13 - The details page should display a section with a summary of the Pokémon', () => {
-//   it('The details section must contain a heading h2 with the text Summary');
-//   it('The details section should contain a paragraph with the summary of the specific Pokémon being viewed');
-// });
+describe('11 - The Pokémon details page should display the name, type, average weight and image of the Pokémon displayed', () => {
+  it('11', () => {
+    const history = createMemoryHistory();
+    const { queryByText, queryByAltText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+
+    pokemons.forEach((pokemon, index) => {
+      const {
+        name, image, type, averageWeight: { value, measurementUnit },
+      } = pokemon;
+      fireEvent.click(queryByText('More details'));
+      expect(queryByText(name)).toBeInTheDocument();
+      expect(queryByText(type)).toBeInTheDocument();
+      expect(queryByText(`Average weight: ${value} ${measurementUnit}`)).toBeInTheDocument();
+      expect(queryByAltText(`${name} sprite`)).toBeInTheDocument();
+      expect(queryByAltText(`${name} sprite`).src).toBe(image);
+      // 12 -  Details page must not contain a navigation link to display details of this Pokémon
+      expect(queryByText('More details')).toBeNull();
+      //
+      history.push('/');
+      for (let i = 0; i < index + 1; i += 1) {
+        fireEvent.click(queryByText('Próximo pokémon'));
+      }
+    });
+  });
+});
+
+describe('13 - Pokedex details page needs a summary title', () => {
+  it('13', () => {
+    const { getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+  });
+});
