@@ -1,6 +1,7 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { render, cleanup, fireEvent, getByTestId } from '@testing-library/react';
+import { MemoryRouter, Router } from 'react-router-dom';
+import { render, cleanup, fireEvent } from '@testing-library/react';
+import { createMemoryHistory } from 'history';
 import App from '../App';
 import Pokemon from '../data';
 
@@ -197,11 +198,27 @@ test.skip('8- Pokedéx must exhibit name, type, averageweight and image from cur
     fireEvent.click(nextPokemonButton);
   });
 });
-test("9- Verify if there's a link named 'more details' on pokemon section", () => {
+test.skip("9- Verify if there's a link named 'more details' on pokemon section", () => {
   const { getByText } = render(
     <MemoryRouter>
       <App />
     </MemoryRouter>,
   );
-  expect(getByText('More details').closest('a'));
+  const pokeName = Pokemon.map((data) => data.id);
+  const moreDetailsButton = getByText('More details');
+  expect(moreDetailsButton).toBeInTheDocument();
+  expect((moreDetailsButton).closest('a'));
+  expect(moreDetailsButton).toHaveAttribute('href', `/pokemons/${pokeName[0]}`);
+});
+test("10- When clicking on pokemón's navigation link, the application must be redirected to pokémon's detail page", () => {
+  const history = createMemoryHistory();
+  const { getByText } = render(
+    <Router history={history}>
+      <App />
+    </Router>,
+  );
+  console.log(history);
+  const moreDetailsButton = getByText('More details');
+  fireEvent.click(moreDetailsButton);
+  expect(history.location.pathname).toBe('/pokemons/25');
 });
