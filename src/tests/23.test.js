@@ -3,6 +3,8 @@ import { cleanup } from '@testing-library/react';
 import renderWithRouter from '../services/renderWithRouter';
 import App from '../App';
 
+afterEach(cleanup);
+
 describe('23.', () => {
   test('When the route not exist, pokedex shows H2 with text', () => {
     const route = '/randomic';
