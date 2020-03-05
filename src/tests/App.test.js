@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, cleanup, fireEvent, getAllByAltText } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import App from '../App';
 import Pokemon from '../data';
@@ -210,15 +210,72 @@ test.skip("9- Verify if there's a link named 'more details' on pokemon section",
   expect((moreDetailsButton).closest('a'));
   expect(moreDetailsButton).toHaveAttribute('href', `/pokemons/${pokeName[0]}`);
 });
-test("10- When clicking on pokemón's navigation link, the application must be redirected to pokémon's detail page", () => {
+test.skip("10- When clicking on pokemón's navigation link, the application must be redirected to pokémon's detail page", () => {
   const history = createMemoryHistory();
   const { getByText } = render(
     <Router history={history}>
       <App />
     </Router>,
   );
-  console.log(history);
   const moreDetailsButton = getByText('More details');
   fireEvent.click(moreDetailsButton);
   expect(history.location.pathname).toBe('/pokemons/25');
+});
+test.skip("11- Pokemon details' page must exhibit name, type, average weight and image from chosen pokemon", () => {
+  const { getByText, queryByText, queryByAltText } = render(
+    <MemoryRouter>
+      <App />
+    </MemoryRouter>,
+  );
+  const moreDetailsButton = getByText('More details');
+  fireEvent.click(moreDetailsButton);
+  const { value, measurementUnit } = Pokemon[0].averageWeight;
+  expect(queryByText(`Average weight: ${value} ${measurementUnit}`)).toBeInTheDocument();
+  expect(queryByAltText(`${Pokemon[0].name} sprite`)).toBeInTheDocument();
+  expect(queryByAltText(`${Pokemon[0].name} sprite`).src).toBeTruthy();
+});
+test.skip('12- The shown Pokémon must not contain a navigation link to show more details about this pokemon', () => {
+  const history = createMemoryHistory();
+  const { getByText, queryByText } = render(
+    <Router history={history}>
+      <App />
+    </Router>,
+  );
+  const moreDetailsButton = getByText('More details');
+  fireEvent.click(moreDetailsButton);
+  expect(queryByText('More details')).toBeNull();
+});
+test.skip("13- Details' page must show a section with the chosen pokemon's summary", () => {
+  const history = createMemoryHistory();
+  const { getByText, getByTestId } = render(
+    <Router history={history}>
+      <App />
+    </Router>,
+  );
+  const moreDetailsButton = getByText('More details');
+  fireEvent.click(moreDetailsButton);
+  const checkSummary = getByText('Summary');
+  const checkText = getByTestId('pokemon-summary');
+  expect((checkSummary).closest('h2'));
+  expect(checkText).toBeInTheDocument();
+});
+test("14- Details page must show a section with the Pokemon's game locations' maps", () => {
+  const history = createMemoryHistory();
+  const { getByText, getByTestId, queryByText } = render(
+    <Router history={history}>
+      <App />
+    </Router>,
+  );
+  const moreDetailsButton = getByText('More details');
+  fireEvent.click(moreDetailsButton);
+  const pokeName = getByText(Pokemon[0].name);
+  expect(pokeName).toBeInTheDocument();
+  const gameLocation = getByText(`Game Locations of ${Pokemon[0].name}`);
+  expect(gameLocation).toBeInTheDocument();
+  const { name, foundAt } = Pokemon[0];
+  foundAt.forEach(({ location, map }) => {
+    expect(queryByText(location)).toBeInTheDocument();
+    expect(getByTestId(location).src).toBe(map);
+    expect(getByTestId(location).alt).toBe(`${name} location`);
+  });
 });
