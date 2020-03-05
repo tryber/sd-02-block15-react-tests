@@ -1,6 +1,8 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 import { render, fireEvent, cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
 import App from '../App';
 import pokemons from '../data';
 
@@ -153,7 +155,7 @@ describe('05 - Pokedex must have a button for reset filter', () => {
 
 describe('06 - The Pokédex should dynamically generate a filter button for each type of Pokémon', () => {
   it('testing the Pokedex types buttons and the render of button "All"', () => {
-    const { getAllByTestId, getByText } = render(
+    const { getAllByTestId, getByText, getByTestId } = render(
       <MemoryRouter>
         <App />
       </MemoryRouter>,
@@ -162,6 +164,7 @@ describe('06 - The Pokédex should dynamically generate a filter button for each
     expect(getByText('All')).toBeInTheDocument();
     expect(getByText('All').tagName).toBe('BUTTON');
     pokemonsTypes.forEach((type) => {
+      expect(getByTestId(type)).toBeInTheDocument();
       expect(getAllByTestId(type).length).toEqual(1);
     });
   });
@@ -193,7 +196,7 @@ describe('08 - Pokedex must show the pokemons\' name, type, average weight and p
     );
 
     pokemons.forEach(({
-      name, type, averageWeight, image,
+      name, type, averageWeight,
     }) => {
       expect(getByText(name)).toBeInTheDocument();
       expect(getAllByText(type)[0]).toBeInTheDocument();
@@ -219,7 +222,7 @@ describe('08 - Pokedex must show the pokemons\' name, type, average weight and p
 
 describe('09 - pokemon card should have a navigation link to it details page', () => {
   it('link should have the URL "/pokemons/<id>" with the pokemon respective id', () => {
-    const { getByAltText, getByText } = render(
+    const { getByText } = render(
       <MemoryRouter>
         <App />
       </MemoryRouter>,
@@ -227,14 +230,70 @@ describe('09 - pokemon card should have a navigation link to it details page', (
     pokemons.forEach(({ id }) => {
       const moreDetails = getByText('More details');
       expect(moreDetails.tagName).toBe('A');
-      expect(moreDetails.href).toEqual(`http://localhost/pokemons/${id}`);
+      expect(moreDetails.href).toMatch(`pokemons/${id}`);
       fireEvent.click(getByText(/Próximo pokémon/));
     });
   });
 });
 
-describe('10 -', () => {
-  it('', () => {
+describe('10 - when click the button "More Details" the page should redirect to the pokemon details page', () => {
+  it('the URL has to change to "/pokemon/<id>"', () => {
+    const history = createMemoryHistory();
+    const { getByText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+    pokemons.forEach(({ id }, index) => {
+      fireEvent.click(getByText(/More details/i));
+      expect(history.location.pathname).toMatch(`/pokemons/${id}`);
+      fireEvent.click(getByText(/Home/));
+      for (let i = 0; i < index + 1; i += 1) {
+        fireEvent.click(getByText(/Próximo pokémon/));
+        // iteração necessária para ele clicar o número de vezes corresponte para ir para o pokemon
+        // certo quando volta para a página Home
+      }
+    });
+  });
+});
 
+describe.skip('11 - pokemon details page must show name, type, average weight and image of the pokemon', () => {
+  it('average weight must be shown in the format "Average weight: <value> <measurementUnit>"', () => {
+    const history = createMemoryHistory();
+    const { getByText, queryByText, getByAltText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+
+    pokemons.forEach(({
+      name, type, averageWeight, image,
+    }) => {
+      fireEvent.click(getByText(/More details/i));
+      expect(getByText(name)).toBeInTheDocument();
+      expect(getByText(type)).toBeInTheDocument();
+      expect(queryByText(`Average weight: ${averageWeight.value} ${averageWeight.measurementUnit}`)).toBeInTheDocument();
+      expect(getByAltText(`${name} sprite`).src).toEqual(image);
+      expect(getByAltText(`${name} sprite`)).toBeInTheDocument();
+      fireEvent.click(getByText(/Home/));
+      fireEvent.click(getByText(/Próximo pokémon/));
+    });
+  });
+});
+
+describe.skip('12 - pokemons details page shouldn\'t have a link "More details', () => {
+  it('testing if there is not a "More details" link', () => {
+    const { getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+
+    pokemons.forEach(() => {
+      fireEvent.click(getByText(/More details/i));
+      expect(getByText(/More details/i)).not.toBeInTheDocument();
+      fireEvent.click(getByText(/Home/));
+      fireEvent.click(getByText(/Próximo pokémon/));
+    });
   });
 });
