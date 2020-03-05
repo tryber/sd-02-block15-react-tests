@@ -1,6 +1,7 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { render, cleanup, fireEvent } from '@testing-library/react';
+import { createMemoryHistory } from 'history';
 import pokemons from '../services/pokemons';
 import App from '../App';
 
@@ -216,8 +217,30 @@ describe('9 - The pokémon displayed in Pokedéx must contain a navigation link 
 
     pokemons.forEach(({ id }) => {
       const details = getByText(/details/i).href;
+      console.log(details);
       expect(details).toMatch(`/pokemons/${id}`);
       fireEvent.click(nextPokemonBtn);
     });
+  });
+});
+
+describe('10 - When clicking on the pokemon navigation link, the application should be redirected to the pokemon details page', () => {
+  it('The URL displayed in the browser should change to / pokemon /, where is the id of the pokemon whose details you want to see', () => {
+    const history = createMemoryHistory();
+    const { getByText } = render(
+      <MemoryRouter history={history}>
+        <App />
+      </MemoryRouter>,
+    );
+    const details = getByText(/details/i);
+    expect(details.tagName).toEqual('A');
+    expect(getByText(details.innerHTML)).toBeInTheDocument();
+    let actual = history.location.pathname;
+    const pokeId = pokemons[0].id;
+    expect(actual).toMatch('/');
+
+    fireEvent.click(details);
+    actual = history.location.pathname;
+    expect(actual).toMatch(`/pokemons/${pokeId}`);
   });
 });
