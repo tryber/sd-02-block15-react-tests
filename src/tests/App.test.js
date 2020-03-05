@@ -340,3 +340,15 @@ test('20', () => {
   fireEvent.click(favoritesButton);
   expect(history.location.pathname).toBe('/favorites');
 });
+test('21', () => {
+  const history = createMemoryHistory();
+  const { getByText, getByTestId } = render(
+    <Router history={history}>
+      <App />
+    </Router>,
+  );
+  const aboutButton = getByText('About');
+  fireEvent.click(aboutButton);
+  const aboutHeader = getByTestId('about');
+  expect((aboutHeader).closest('h2'));
+});
