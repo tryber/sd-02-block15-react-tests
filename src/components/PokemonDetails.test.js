@@ -171,4 +171,22 @@ describe('14 - The details page should display a section with maps with the loca
   });
 });
 
+describe.skip('15 - A página de detalhes deve permitir favoritar um pokémon', () => {
+  it('The page must contain a checkbox that allows you to favor a Pokémon. Clicks in the checkbox should alternately add and remove the Pokémon from the list of favorites', () => {
 
+  });
+
+  it('The checkbox label must be "Pokémon favoritado"', () => {
+
+  });
+});
+
+describe.skip('16 - Favorite Pokémon should display a star icon', () => {
+  it('The icon must be an image, with the src attribute equal to /star-icon.svg', () => {
+
+  });
+
+  it('The image must have the alt attribute equal to "<pokemon> is marked as favorite", where <pokemon> is the name of the pokemon whose details are being displayed', () => {
+
+  });
+});
