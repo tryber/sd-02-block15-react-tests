@@ -6,7 +6,7 @@ import App from '../App';
 afterEach(cleanup);
 
 describe('15.', () => {
-  test('Pokedex details accept add pokemon to favorite list', () => {
+  test('Pokedex don´t have a favorite pokemon', () => {
     const { queryByText, queryByLabelText } = renderWithRouter(<App />);
     const moreDetails = queryByText(/More Details/i);
     fireEvent.click(moreDetails);
@@ -18,7 +18,7 @@ describe('15.', () => {
 
     expect(queryByText(/Average weight:/i)).toBeNull();
   });
-  test('Pokedex details accept add pokemon to favorite list', () => {
+  test('Pokedex have pokemon at a favorite list', () => {
     const { queryByText, queryByLabelText } = renderWithRouter(<App />);
     const moreDetails = queryByText(/More Details/i);
     fireEvent.click(moreDetails);
