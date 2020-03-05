@@ -71,4 +71,50 @@ describe('Pokemon app.js tests', () => {
       }
     });
   });
+
+  test('12 - O pokémon exibido na página de detalhes não deve conter um link..', () => {
+    const history = createMemoryHistory();
+    const { queryByText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+    pokemonsMock.forEach((pokemon, index) => {
+      const { id, name } = pokemon;
+      expect(queryByText('More details', {selector: 'a' })).toBeInTheDocument();
+      fireEvent.click(queryByText('More details'));
+      const page = `/pokemons/${id}`;
+      expect(history.location.pathname).toBe(page);
+      expect(queryByText(`${name} Details`)).toBeInTheDocument();
+      expect(queryByText('More details', { selector: 'a' })).not.toBeInTheDocument();
+      history.push('/');
+      for (let i = 0; i <= index; i += 1) {
+        const nextBtn = queryByText(/Próximo pokémon/i);
+        fireEvent.click(nextBtn);
+      }
+    });
+  });
+  test('13 - A página de detalhes deve exibir uma seção com um resumo do pokémon', () => {
+    const history = createMemoryHistory();
+    const { queryByText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+    pokemonsMock.forEach((pokemon, index) => {
+      const { id, summary } = pokemon;
+      fireEvent.click(queryByText('More details'));
+      const page = `/pokemons/${id}`;
+      expect(history.location.pathname).toBe(page);
+      // A seção de detalhes deve conter um heading h2 com o texto Summary;
+      expect(queryByText('Summary', { selector: 'h2' })).toBeInTheDocument();
+      // A seção de detalhes deve conter um parágrafo com o resumo do pokémon específico...
+      expect(queryByText(summary)).toBeInTheDocument();
+      history.push('/');
+      for (let i = 0; i <= index; i += 1) {
+        const nextBtn = queryByText(/Próximo pokémon/i);
+        fireEvent.click(nextBtn);
+      }
+    });
+  });
 });
