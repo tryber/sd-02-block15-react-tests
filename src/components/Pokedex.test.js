@@ -137,3 +137,87 @@ describe('5 - The Pokédex must contain a button to reset the filter', () => {
     });
   });
 });
+
+describe('6 - The Pokédex should dynamically generate a filter button for each type of Pokémon', () => {
+  it('Pokedex create one filter for type of pokemon', () => {
+    const { getAllByTestId, getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const pokemonTypes = [...new Set(pokemons.map((pokemon) => pokemon.type))];
+
+    expect(getByText('All')).toBeInTheDocument();
+    expect(getByText('All').tagName).toBe('BUTTON');
+    pokemonTypes.forEach((type) => {
+      expect(getAllByTestId(type).length).toEqual(1);
+    });
+  });
+});
+
+describe('7 - If the filtered list of Pokémon has only one Pokémon, the Next Pokémon button should be disabled', () => {
+  it('7', () => {
+    const { getAllByText, getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const nextPokemonBtn = getByText(/Próximo pokémon/i);
+    const allButton = getByText(/All/i);
+    const bugButton = getAllByText('Bug')[1] || getByText('Bug');
+
+    expect(bugButton.tagName).toBe('BUTTON');
+    fireEvent.click(bugButton);
+    expect(nextPokemonBtn.disabled).toBeTruthy();
+    expect(allButton.tagName).toBe('BUTTON');
+    fireEvent.click(allButton);
+    expect(nextPokemonBtn.disabled).toBeFalsy();
+  });
+});
+
+describe('8 - Pokedéx must display the name, type, average weight and image of the Pokémon displayed', () => {
+  it('8', () => {
+    const {
+      getByText,
+      queryAllByText,
+      queryByText,
+      getByAltText,
+    } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const nextPokemonBtn = getByText(/Próximo pokémon/i);
+
+    pokemons.forEach((pokemon) => {
+      const pokemonName = getByText(pokemon.name);
+      const pokemonType = queryAllByText(pokemon.type)[0];
+      const pokemonWeight = queryByText(`Average weight: ${pokemon.averageWeight.value} ${pokemon.averageWeight.measurementUnit}`);
+      const pokemonImageAlt = getByAltText(`${pokemon.name} sprite`);
+
+      expect(pokemonName).toBeInTheDocument();
+      expect(pokemonType).toBeInTheDocument();
+      expect(pokemonWeight).toBeInTheDocument();
+      expect(pokemonImageAlt).toBeInTheDocument();
+      expect(pokemonImageAlt.src === pokemon.image).toBeTruthy();
+      fireEvent.click(nextPokemonBtn);
+    });
+  });
+});
+
+describe('9 - The pokémon displayed in Pokedéx must contain a navigation link with the URL /pokemons/ where the pokémon id is displayed to display details of this pokémon', () => {
+  it('9', () => {
+    const { getByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    const nextPokemonBtn = getByText(/Próximo pokémon/i);
+
+    pokemons.forEach(({ id }) => {
+      const details = getByText(/details/i).href;
+      expect(details).toMatch(`/pokemons/${id}`);
+      fireEvent.click(nextPokemonBtn);
+    });
+  });
+});
