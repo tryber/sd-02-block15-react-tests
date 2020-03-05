@@ -51,7 +51,7 @@ class PokemonDetails extends React.Component {
 
     return (
       <form className="favorite-form">
-        <label htmlFor="favorite">
+        <label data-testid="favorite-button" htmlFor="favorite">
           Pokémon favoritado?
           <input
             type="checkbox"

@@ -279,3 +279,19 @@ test("14- Details page must show a section with the Pokemon's game locations' ma
     expect(getByTestId(location).alt).toBe(`${name} location`);
   });
 });
+test('15- Details page must allow to check a pokemon as favorite', () => {
+  const history = createMemoryHistory();
+  const { getByText, getByTestId, getByLabelText } = render(
+    <Router history={history}>
+      <App />
+    </Router>,
+  );
+  const moreDetailsButton = getByText('More details');
+  fireEvent.click(moreDetailsButton);
+  const favoriteButton = getByTestId('favorite-button');
+  expect(favoriteButton).toBeInTheDocument();
+  expect(getByLabelText('Pokémon favoritado?')).toBeInTheDocument();
+  fireEvent.click(favoriteButton);
+  const favoriteIcon = getByTestId('favorite-icon');
+  expect(favoriteIcon).toBeInTheDocument();
+});
