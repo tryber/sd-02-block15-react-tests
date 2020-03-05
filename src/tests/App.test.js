@@ -259,7 +259,7 @@ test.skip("13- Details' page must show a section with the chosen pokemon's summa
   expect((checkSummary).closest('h2'));
   expect(checkText).toBeInTheDocument();
 });
-test("14- Details page must show a section with the Pokemon's game locations' maps", () => {
+test.skip("14- Details page must show a section with the Pokemon's game locations' maps", () => {
   const history = createMemoryHistory();
   const { getByText, getByTestId, queryByText } = render(
     <Router history={history}>
@@ -279,7 +279,7 @@ test("14- Details page must show a section with the Pokemon's game locations' ma
     expect(getByTestId(location).alt).toBe(`${name} location`);
   });
 });
-test('15- Details page must allow to check a pokemon as favorite', () => {
+test.skip('15, 16- Details page must allow to check a pokemon as favorite', () => {
   const history = createMemoryHistory();
   const { getByText, getByTestId, getByLabelText } = render(
     <Router history={history}>
@@ -294,4 +294,49 @@ test('15- Details page must allow to check a pokemon as favorite', () => {
   fireEvent.click(favoriteButton);
   const favoriteIcon = getByTestId('favorite-icon');
   expect(favoriteIcon).toBeInTheDocument();
+  expect(favoriteIcon).toHaveAttribute('src', '/star-icon.svg');
+  expect(favoriteIcon).toHaveAttribute('alt', 'Pikachu is marked as favorite');
+});
+test.skip('17', () => {
+  const history = createMemoryHistory();
+  const { getByText } = render(
+    <Router history={history}>
+      <App />
+    </Router>,
+  );
+  expect(getByText('Home', { selector: 'a' })).toBeInTheDocument();
+  expect(getByText('Home').href).toBe('http://localhost/');
+});
+test('18', () => {
+  const history = createMemoryHistory();
+  const { getByText } = render(
+    <Router history={history}>
+      <App />
+    </Router>,
+  );
+  const homeButton = getByText('Home', { selector: 'a' });
+  fireEvent.click(homeButton);
+  expect(history.location.pathname).toBe('/');
+});
+test('19', () => {
+  const history = createMemoryHistory();
+  const { getByText } = render(
+    <Router history={history}>
+      <App />
+    </Router>,
+  );
+  const aboutButton = getByText('About', { selector: 'a' });
+  fireEvent.click(aboutButton);
+  expect(history.location.pathname).toBe('/about');
+});
+test('20', () => {
+  const history = createMemoryHistory();
+  const { getByText } = render(
+    <Router history={history}>
+      <App />
+    </Router>,
+  );
+  const favoritesButton = getByText('Favorite Pokémons', { selector: 'a' });
+  fireEvent.click(favoritesButton);
+  expect(history.location.pathname).toBe('/favorites');
 });
