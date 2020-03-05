@@ -25,7 +25,7 @@ describe('21 - The "About" page should display information about Pokédex', () =
       </MemoryRouter>,
     );
     fireEvent.click(getByText(/About/i));
-    const aboutParagraphs = getAllByTestId('aboutP');
+    const aboutParagraphs = getAllByTestId('about');
     expect(aboutParagraphs.length).toBe(2);
   });
 
