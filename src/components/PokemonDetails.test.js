@@ -1,7 +1,7 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import { render, fireEvent, cleanup } from '@testing-library/react';
+import { render, fireEvent, cleanup, getAllByAltText } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import App from '../App';
 import pokemons from '../data';
@@ -150,17 +150,18 @@ describe('14 - The details page should display a section with maps with the loca
     });
   });
 
-  it('Each location should display the location name and an image of the location map', () => {
+  it('Each location should display the location name and an image of the location map(sub requisitos 3, 4 e 5', () => {
     const { getByText, queryByText, getByTestId } = render(
       <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
-    pokemons.forEach(({ foundAt }, index) => {
+    pokemons.forEach(({ name, foundAt }, index) => {
       fireEvent.click(getByText(/More details/i));
       foundAt.forEach(({ location, map }) => {
         expect(queryByText(location)).toBeInTheDocument();
         expect(getByTestId(location).src).toBe(map);
+        expect(getByTestId(location).alt).toBe(`${name} location`);
       });
       fireEvent.click(getByText(/Home/));
       for (let i = 0; i <= index; i += 1) {
