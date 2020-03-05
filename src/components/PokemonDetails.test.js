@@ -19,7 +19,7 @@ describe('10 - when click the button "More Details" the page should redirect to 
 
     pokemons.forEach(({ id }, index) => {
       fireEvent.click(getByText(/More details/i));
-      expect(history.location.pathname).toMatch(`/pokemons/${id}`);
+      expect(history.location.pathname).toEqual(`/pokemons/${id}`);
       fireEvent.click(getByText(/Home/));
       for (let i = 0; i <= index; i += 1) {
         fireEvent.click(getByText(/Próximo pokémon/));
@@ -56,9 +56,9 @@ describe('11 - pokemon details page must show name, type, average weight and ima
   });
 });
 
-describe.skip('12 - pokemons details page shouldn\'t have a link "More details', () => {
+describe('12 - pokemons details page shouldn\'t have a link "More details', () => {
   it('testing if there is not a "More details" link', () => {
-    const { getByText } = render(
+    const { queryByText, getByText } = render(
       <MemoryRouter>
         <App />
       </MemoryRouter>,
@@ -66,9 +66,9 @@ describe.skip('12 - pokemons details page shouldn\'t have a link "More details',
 
     pokemons.forEach((pokemon, index) => {
       fireEvent.click(getByText(/More details/i));
-      expect(getByText(/More details/i)).not.toBeInTheDocument();
+      expect(queryByText(/More details/i)).toBeNull();
       fireEvent.click(getByText(/Home/));
-      for (let i = 0; i < index + 1; i += 1) {
+      for (let i = 0; i <= index; i += 1) {
         fireEvent.click(getByText(/Próximo pokémon/));
       }
     });
@@ -88,7 +88,7 @@ describe('13 - The details page should display a section with a summary of the P
       const summary = getByText(/Summary/i, { selector: 'h2' });
       expect(summary).toBeInTheDocument();
       fireEvent.click(getByText(/Home/));
-      for (let i = 0; i < index + 1; i += 1) {
+      for (let i = 0; i <= index; i += 1) {
         fireEvent.click(getByText(/Próximo pokémon/));
       }
     });
@@ -105,7 +105,7 @@ describe('13 - The details page should display a section with a summary of the P
       fireEvent.click(getByText(/More details/i));
       expect(queryByText(summary)).toBeInTheDocument();
       fireEvent.click(getByText(/Home/));
-      for (let i = 0; i < index + 1; i += 1) {
+      for (let i = 0; i <= index; i += 1) {
         fireEvent.click(getByText(/Próximo pokémon/));
       }
     });
@@ -123,12 +123,51 @@ describe('14 - The details page should display a section with maps with the loca
     pokemons.forEach(({ name }, index) => {
       // v{ name, foundAt: { location } }, index
       fireEvent.click(getByText(/More details/i));
-      // const summary = getByText(location, { selector: 'h2' });
-      expect(queryByText(`Game Locations of ${name}`)).toBeInTheDocument();
+      expect(queryByText(`Game Locations of ${name}`, { selector: 'h2' })).toBeInTheDocument();
       fireEvent.click(getByText(/Home/));
-      for (let i = 0; i < index + 1; i += 1) {
+      for (let i = 0; i <= index; i += 1) {
+        fireEvent.click(getByText(/Próximo pokémon/));
+      }
+    });
+  });
+
+  it('The details section should display all the locations of the pokémon', () => {
+    const { getByText, queryByText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+
+    pokemons.forEach(({ foundAt }, index) => {
+      fireEvent.click(getByText(/More details/i));
+      foundAt.forEach(({ location }) => {
+        expect(queryByText(location)).toBeInTheDocument();
+      });
+      fireEvent.click(getByText(/Home/));
+      for (let i = 0; i <= index; i += 1) {
+        fireEvent.click(getByText(/Próximo pokémon/));
+      }
+    });
+  });
+
+  it('Each location should display the location name and an image of the location map', () => {
+    const { getByText, queryByText, getByTestId } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    pokemons.forEach(({ foundAt }, index) => {
+      fireEvent.click(getByText(/More details/i));
+      foundAt.forEach(({ location, map }) => {
+        expect(queryByText(location)).toBeInTheDocument();
+        expect(getByTestId(location).src).toBe(map);
+      });
+      fireEvent.click(getByText(/Home/));
+      for (let i = 0; i <= index; i += 1) {
         fireEvent.click(getByText(/Próximo pokémon/));
       }
     });
   });
 });
+
+
