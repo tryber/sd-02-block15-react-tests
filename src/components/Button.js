@@ -8,8 +8,10 @@ const Button = ({
   children,
   disabled,
   onClick,
+  dataTestId
 }) => (
   <button
+    data-testid={dataTestId}
     onClick={onClick}
     className={`button-text ${className}`}
     disabled={disabled}

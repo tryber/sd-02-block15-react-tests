@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
-import { render, fireEvent, cleanup, getAllByTestId } from '@testing-library/react';
+import { render, fireEvent, cleanup } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import App from './App';
 
@@ -15,6 +15,8 @@ const arrayPokemons = [
   { name: 'Snorlax', type: 'Normal', averageWeight: '460.0 kg' },
   { name: 'Dragonair', type: 'Dragon', averageWeight: '16.5 kg' },
 ];
+
+const arrayPokemonTypes = ['Electric', 'Fire', 'Bug', 'Poison', 'Psychic', 'Normal', 'Dragon'];
 
 function renderWithRouter(
   ui,
@@ -135,5 +137,38 @@ describe('3 - Ao apertar o botão de próximo, a página deve exibir o próximo 
     fireEvent.click(botaoProximoPokemon);
 
     expect(getByText(arrayPokemons[0].name)).toBeInTheDocument();
+  });
+});
+
+describe('4 - A Pokédex deve conter botões de filtro', () => {
+  test('O texto do botão deve ser o nome do tipo, p. ex. Psychic', () => {
+    const { getAllByText, getAllByTestId, getByText } = renderWithRouter(<App />);
+
+    const arrayBotoesDeTipo = getAllByTestId('botao-de-tipo');
+    const arrayTextosBotoes = arrayBotoesDeTipo.map((botao) => botao.innerHTML);
+
+    arrayTextosBotoes.forEach((textoBotao) => {
+      expect(arrayPokemonTypes).toContain(textoBotao);
+      expect(getAllByText(textoBotao)[1] || getByText(textoBotao)).toBeInTheDocument();
+    });
+  
+    expect(arrayPokemonTypes.length).toBe(arrayTextosBotoes.length);
+  });
+
+  test('A partir da seleção de um botão de tipo, a Pokédex deve circular somente pelos pokémons daquele tipo', () => {
+    const { getAllByText, getAllByTestId, getByText } = renderWithRouter(<App />);
+
+    const arrayBotoesDeTipo = getAllByTestId('botao-de-tipo');
+
+    arrayBotoesDeTipo.forEach((botao) => {
+      fireEvent.click(botao);
+      expect(getAllByText(botao.innerHTML).length).toBe(2);
+
+      for (let i = 0; i < 10; i += 1) {
+        fireEvent.click(getByText('Próximo pokémon'));
+        expect(getAllByText(botao.innerHTML).length).toBe(2);
+      }
+    });
+
   });
 });
