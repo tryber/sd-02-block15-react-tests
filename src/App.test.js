@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
-import { render, fireEvent, cleanup } from '@testing-library/react';
+import { render, fireEvent, cleanup, getByTestId } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import App from './App';
 
@@ -148,8 +148,8 @@ describe('4 - A Pokédex deve conter botões de filtro', () => {
     const arrayTextosBotoes = arrayBotoesDeTipo.map((botao) => botao.innerHTML);
 
     arrayTextosBotoes.forEach((textoBotao) => {
-      expect(arrayPokemonTypes).toContain(textoBotao);
       expect(getAllByText(textoBotao)[1] || getByText(textoBotao)).toBeInTheDocument();
+      expect(arrayPokemonTypes).toContain(textoBotao);
     });
   
     expect(arrayPokemonTypes.length).toBe(arrayTextosBotoes.length);
@@ -169,6 +169,61 @@ describe('4 - A Pokédex deve conter botões de filtro', () => {
         expect(getAllByText(botao.innerHTML).length).toBe(2);
       }
     });
+  });
+});
 
+describe('5 - A Pokédex deve conter um botão para resetar o filtro', () => {
+  test('O texto do botão deve ser "All"', () => {
+    const { getByTestId } = renderWithRouter(<App />);
+
+    const botaoAll = getByTestId('botao-all');
+
+    expect(botaoAll).toBeInTheDocument();
+    expect(botaoAll.innerHTML).toBe('All');
+  });
+
+  test('Após clicá-lo, a Pokédex deve voltar a circular por todos os pokémons', () => {
+    const { getByText, getByTestId, getAllByTestId, getAllByText } = renderWithRouter(<App />);
+
+    const arrayBotoesDeTipo = getAllByTestId('botao-de-tipo');
+    const botaoAll = getByTestId('botao-all');
+
+    arrayBotoesDeTipo.forEach((botaoDeTipo) => {
+      fireEvent.click(botaoDeTipo);
+      expect(getAllByText(botaoDeTipo.innerHTML).length).toBe(2);
+
+      for (let i = 0; i < 10; i += 1) {
+        fireEvent.click(getByText('Próximo pokémon'));
+        expect(getAllByText(botaoDeTipo.innerHTML).length).toBe(2);
+      }
+
+      fireEvent.click(botaoAll);
+
+      const primeiroPokemonName = getByText(arrayPokemons[0].name);
+      expect(primeiroPokemonName).toBeInTheDocument();
+
+      const botaoProximoPokemon = getByText('Próximo pokémon');
+
+      for (let i = 0; i < 9; i += 1) {
+        fireEvent.click(botaoProximoPokemon);
+        const proximoPokemonName = (i < 8) ? getByText(arrayPokemons[i + 1].name) : getByText(arrayPokemons[0].name);
+        expect(proximoPokemonName).toBeInTheDocument();
+      }
+    });
+  });
+
+  test('Quando a página carrega, o filtro selecionado deve ser o "All"', () => {
+    const { getByText } = renderWithRouter(<App />);
+
+    const primeiroPokemonName = getByText(arrayPokemons[0].name);
+    expect(primeiroPokemonName).toBeInTheDocument();
+
+    const botaoProximoPokemon = getByText('Próximo pokémon');
+
+    for (let i = 0; i < 9; i += 1) {
+      fireEvent.click(botaoProximoPokemon);
+      const proximoPokemonName = (i < 8) ? getByText(arrayPokemons[i + 1].name) : getByText(arrayPokemons[0].name);
+      expect(proximoPokemonName).toBeInTheDocument();
+    }
   });
 });

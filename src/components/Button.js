@@ -8,7 +8,7 @@ const Button = ({
   children,
   disabled,
   onClick,
-  dataTestId
+  dataTestId,
 }) => (
   <button
     data-testid={dataTestId}
