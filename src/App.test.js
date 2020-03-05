@@ -237,3 +237,89 @@ describe('6 - A Pokédex deve gerar, dinamicamente, um botão de filtro para cad
     expect(botaoAll).toBeInTheDocument();
   });
 });
+
+describe('7 - O botão de Próximo pokémon deve ser desabilitado se a lista filtrada de pokémons tiver um só pokémon', () => {
+  test('botão fica desabilitado se o tipo "Bug" é selecionado', () => {
+    const { getByText } = renderWithRouter(<App />);
+
+    const botaoProximoPokemon = getByText('Próximo pokémon');
+    expect(botaoProximoPokemon.disabled).toBe(false);
+
+    const botaoBug = getByText('Bug');
+    fireEvent.click(botaoBug);
+
+    expect(botaoProximoPokemon.disabled).toBe(true);
+  });
+});
+
+describe('8 - A Pokedéx deve exibir o nome, tipo, peso médio e imagem do pokémon exibido', () => {
+  test('exibe nome e tipo', () => {
+    const { getAllByText, getByText } = renderWithRouter(<App />);
+
+    const botaoProximoPokemon = getByText('Próximo pokémon');
+    pokemons.forEach((pokemon) => {
+      const name = getByText(pokemon.name);
+      expect(name).toBeInTheDocument();
+
+      const type = getAllByText(pokemon.type)[0];
+      expect(type).toBeInTheDocument();
+
+      fireEvent.click(botaoProximoPokemon);
+    });
+  });
+
+  test('O peso médio do pokémon deve ser exibido com um texto no formato "Average weight: <value> <measurementUnit>"', () => {
+    const { getByText } = renderWithRouter(<App />);
+
+    const botaoProximoPokemon = getByText('Próximo pokémon');
+    pokemons.forEach((pokemon) => {
+      const averageWeight = getByText(`Average weight: ${pokemon.averageWeight.value} ${pokemon.averageWeight.measurementUnit}`);
+      expect(averageWeight).toBeInTheDocument();
+
+      fireEvent.click(botaoProximoPokemon);
+    });
+  });
+
+  test('A imagem deve conter um atributo src com a URL da imagem do pokémon e um atributo alt com o nome do pokémon', () => {
+    const { getByAltText, getByText } = renderWithRouter(<App />);
+
+    const botaoProximoPokemon = getByText('Próximo pokémon');
+
+    pokemons.forEach((pokemon) => {
+      const image = getByAltText(`${pokemon.name} sprite`);
+      expect(image).toBeInTheDocument();
+      expect(image.src).toBe(pokemon.image);
+
+      fireEvent.click(botaoProximoPokemon);
+    });
+  });
+});
+
+describe('9 - O pokémon exibido na Pokedéx deve conter um link de navegação para exibir detalhes deste pokémon', () => {
+  test('o link é exibido', () => {
+    const { getByText } = renderWithRouter(<App />);
+
+    const botaoProximoPokemon = getByText('Próximo pokémon')
+
+    pokemons.forEach((pokemon) => {
+      const linkDetalhes = getByText('More details');
+      expect(linkDetalhes).toBeInTheDocument();
+
+      fireEvent.click(botaoProximoPokemon);
+    });
+  });
+
+  test('O link deve possuir a URL "/pokemons/<id>"', () => {
+    const { getByText } = renderWithRouter(<App />);
+
+    const botaoProximoPokemon = getByText('Próximo pokémon')
+
+    pokemons.forEach((pokemon) => {
+      const linkDetalhes = getByText('More details');
+
+      expect(linkDetalhes.href).toMatch(`/pokemons/${pokemon.id}`);
+
+      fireEvent.click(botaoProximoPokemon);
+    });
+  });
+});
