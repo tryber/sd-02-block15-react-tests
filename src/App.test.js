@@ -3,20 +3,7 @@ import { MemoryRouter, Router } from 'react-router-dom';
 import { render, fireEvent, cleanup, getByTestId } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import App from './App';
-
-const arrayPokemons = [
-  { name: 'Pikachu', type: 'Electric', averageWeight: '6.0 kg' },
-  { name: 'Charmander', type: 'Fire', averageWeight: '8.5 kg' },
-  { name: 'Caterpie', type: 'Bug', averageWeight: '2.9 kg' },
-  { name: 'Ekans', type: 'Poison', averageWeight: '6.9 kg' },
-  { name: 'Alakazam', type: 'Psychic', averageWeight: '48.0 kg' },
-  { name: 'Mew', type: 'Psychic', averageWeight: '4.0 kg' },
-  { name: 'Rapidash', type: 'Fire', averageWeight: '95.0 kg' },
-  { name: 'Snorlax', type: 'Normal', averageWeight: '460.0 kg' },
-  { name: 'Dragonair', type: 'Dragon', averageWeight: '16.5 kg' },
-];
-
-const arrayPokemonTypes = ['Electric', 'Fire', 'Bug', 'Poison', 'Psychic', 'Normal', 'Dragon'];
+import pokemons from './data';
 
 function renderWithRouter(
   ui,
@@ -79,7 +66,7 @@ describe('2 - A Pokédex deve exibir apenas um pokémon por vez', () => {
     const botoes = document.getElementsByTagName('button');
 
     for (let i = 0; i < 100; i += 1) {
-      const indexAleatorio = Math.round(Math.random() * 8);
+      const indexAleatorio = Math.round(Math.random() * (botoes.length - 1));
       const botao = botoes[indexAleatorio];
   
       fireEvent.click(botao);
@@ -115,12 +102,12 @@ describe('3 - Ao apertar o botão de próximo, a página deve exibir o próximo 
 
     const botaoProximoPokemon = getByText('Próximo pokémon');
 
-    for (let i = 0; i < 8; i += 1) {
+    for (let i = 0; i < pokemons.length - 1; i += 1) {
       fireEvent.click(botaoProximoPokemon);
 
       expect(botaoProximoPokemon).toBeInTheDocument();
 
-      const pokemonName = getByText(arrayPokemons[i + 1].name);
+      const pokemonName = getByText(pokemons[i + 1].name);
       expect(pokemonName).toBeInTheDocument();
     }
   });
@@ -130,13 +117,13 @@ describe('3 - Ao apertar o botão de próximo, a página deve exibir o próximo 
 
     const botaoProximoPokemon = getByText('Próximo pokémon');
 
-    while (queryByText(arrayPokemons[arrayPokemons.length - 1].name) === null) {
+    while (queryByText(pokemons[pokemons.length - 1].name) === null) {
       fireEvent.click(botaoProximoPokemon);
     }
 
     fireEvent.click(botaoProximoPokemon);
 
-    expect(getByText(arrayPokemons[0].name)).toBeInTheDocument();
+    expect(getByText(pokemons[0].name)).toBeInTheDocument();
   });
 });
 
@@ -146,6 +133,7 @@ describe('4 - A Pokédex deve conter botões de filtro', () => {
 
     const arrayBotoesDeTipo = getAllByTestId('botao-de-tipo');
     const arrayTextosBotoes = arrayBotoesDeTipo.map((botao) => botao.innerHTML);
+    const arrayPokemonTypes = Array.from( new Set(pokemons.map((pokemon) => pokemon.type)));
 
     arrayTextosBotoes.forEach((textoBotao) => {
       expect(getAllByText(textoBotao)[1] || getByText(textoBotao)).toBeInTheDocument();
@@ -199,14 +187,14 @@ describe('5 - A Pokédex deve conter um botão para resetar o filtro', () => {
 
       fireEvent.click(botaoAll);
 
-      const primeiroPokemonName = getByText(arrayPokemons[0].name);
+      const primeiroPokemonName = getByText(pokemons[0].name);
       expect(primeiroPokemonName).toBeInTheDocument();
 
       const botaoProximoPokemon = getByText('Próximo pokémon');
 
-      for (let i = 0; i < 9; i += 1) {
+      for (let i = 0; i < pokemons.length; i += 1) {
         fireEvent.click(botaoProximoPokemon);
-        const proximoPokemonName = (i < 8) ? getByText(arrayPokemons[i + 1].name) : getByText(arrayPokemons[0].name);
+        const proximoPokemonName = (i < (pokemons.length - 1)) ? getByText(pokemons[i + 1].name) : getByText(pokemons[0].name);
         expect(proximoPokemonName).toBeInTheDocument();
       }
     });
@@ -215,15 +203,37 @@ describe('5 - A Pokédex deve conter um botão para resetar o filtro', () => {
   test('Quando a página carrega, o filtro selecionado deve ser o "All"', () => {
     const { getByText } = renderWithRouter(<App />);
 
-    const primeiroPokemonName = getByText(arrayPokemons[0].name);
+    const primeiroPokemonName = getByText(pokemons[0].name);
     expect(primeiroPokemonName).toBeInTheDocument();
 
     const botaoProximoPokemon = getByText('Próximo pokémon');
 
-    for (let i = 0; i < 9; i += 1) {
+    for (let i = 0; i < pokemons.length - 1; i += 1) {
       fireEvent.click(botaoProximoPokemon);
-      const proximoPokemonName = (i < 8) ? getByText(arrayPokemons[i + 1].name) : getByText(arrayPokemons[0].name);
+
+      const proximoPokemonName = (i < 8) ? getByText(pokemons[i + 1].name) : getByText(pokemons[0].name);
       expect(proximoPokemonName).toBeInTheDocument();
     }
+  });
+});
+
+describe('6 - A Pokédex deve gerar, dinamicamente, um botão de filtro para cada tipo de pokémon', () => {
+  test('Os botões de filtragem devem ser dinâmicos: sua Pokédex deve gerar um botão de filtragem para cada tipo de pokémon disponível nos dados independente de quais ou quantos sejam, sem repetição de tipos', () => {
+    const { getAllByText, getByText } = renderWithRouter(<App />);
+
+    const pokemonTypes = Array.from(new Set(pokemons.map((pokemon) => pokemon.type)));
+
+    pokemonTypes.forEach((type) => {
+      const botaoDeTipo = getAllByText(type)[1] || getByText(type);
+      expect(botaoDeTipo).toBeInTheDocument();
+      expect(getAllByText(type).length).toBeLessThanOrEqual(2);
+    });
+  });
+
+  test('Além disso, ela deve manter o botão "All"', () => {
+    const { getByText } = renderWithRouter(<App />);
+
+    const botaoAll = getByText('All');
+    expect(botaoAll).toBeInTheDocument();
   });
 });
