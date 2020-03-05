@@ -91,3 +91,14 @@ describe('requisitos 18, 19 e 20', () => {
     expect(history.location.pathname).toBe('/favorites');
   });
 });
+
+describe('23', () => {
+  it('Entering an unknown URL displays the Not Found page', () => {
+    const { getByText } = render(
+      <MemoryRouter initialEntries={['/unknown']}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(getByText('Page requested not found', { selector: 'h2' })).toBeInTheDocument();
+  });
+});
