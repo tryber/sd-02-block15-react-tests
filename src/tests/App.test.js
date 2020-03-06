@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
-import { render, cleanup, fireEvent, getAllByAltText } from '@testing-library/react';
+import { render, cleanup, fireEvent, getAllByAltText, getByAltText } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import App from '../App';
 import Pokemon from '../data';
@@ -297,7 +297,7 @@ test.skip('15, 16- Details page must allow to check a pokemon as favorite', () =
   expect(favoriteIcon).toHaveAttribute('src', '/star-icon.svg');
   expect(favoriteIcon).toHaveAttribute('alt', 'Pikachu is marked as favorite');
 });
-test.skip('17', () => {
+test('17', () => {
   const history = createMemoryHistory();
   const { getByText } = render(
     <Router history={history}>
@@ -306,6 +306,10 @@ test.skip('17', () => {
   );
   expect(getByText('Home', { selector: 'a' })).toBeInTheDocument();
   expect(getByText('Home').href).toBe('http://localhost/');
+  expect(getByText('About', { selector: 'a' })).toBeInTheDocument();
+  expect(getByText('About').href).toBe('http://localhost/about');
+  expect(getByText('Favorite Pokémons', { selector: 'a' })).toBeInTheDocument();
+  expect(getByText('Favorite Pokémons').href).toBe('http://localhost/favorites');
 });
 test('18', () => {
   const history = createMemoryHistory();
@@ -351,4 +355,16 @@ test('21', () => {
   fireEvent.click(aboutButton);
   const aboutHeader = getByTestId('about');
   expect((aboutHeader).closest('h2'));
+});
+test('23', () => {
+  const { getByText, getByAltText } = render(
+    <MemoryRouter initialEntries={['/digimon']}>
+      <App />
+    </MemoryRouter>,
+  );
+  const notFound = getByText(/Page requested not found/);
+  expect((notFound).closest('h2'));
+  expect(notFound).toBeInTheDocument();
+  const pikachuGif = getByAltText('Pikachu crying because the page requested was not found');
+  expect(pikachuGif).toBeInTheDocument();
 });
