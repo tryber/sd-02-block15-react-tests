@@ -37,4 +37,23 @@ describe('Pokemon app.js tests', () => {
       }
     });
   });
+
+  test('17 - No topo da aplicação, deve haver um conjunto fixo de links de navegação', () => {
+    const history = createMemoryHistory();
+    const { queryByText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+    const localhost = 'http://localhost';
+    // O primeiro link deve possuir o texto Home com a URL
+    expect(queryByText('Home')).toBeInTheDocument();
+    expect(queryByText('Home').href).toBe(`${localhost}/`);
+    // O segundo link deve possuir o texto About com a URL /about
+    expect(queryByText('About')).toBeInTheDocument();
+    expect(queryByText('About').href).toBe(`${localhost}/about`);
+    // O terceiro link deve possuir o texto Favorite Pokémons com a URL /favorites
+    expect(queryByText('Favorite Pokémons')).toBeInTheDocument();
+    expect(queryByText('Favorite Pokémons').href).toBe(`${localhost}/favorites`);
+  });
 });
