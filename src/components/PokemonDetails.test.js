@@ -1,7 +1,7 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import { render, fireEvent, cleanup } from '@testing-library/react';
+import { render, fireEvent, cleanup, getAllByAltText } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import App from '../App';
 import pokemons from '../data';
@@ -171,13 +171,46 @@ describe('14 - The details page should display a section with maps with the loca
   });
 });
 
-describe.skip('15 - A página de detalhes deve permitir favoritar um pokémon', () => {
-  it('The page must contain a checkbox that allows you to favor a Pokémon. Clicks in the checkbox should alternately add and remove the Pokémon from the list of favorites', () => {
-
+describe('15 - A página de detalhes deve permitir favoritar um pokémon', () => {
+  it('The page must contain a checkbox that allows you to favorite a Pokémon. Clicks in the checkbox should alternately add and remove the Pokémon from the list of favorites', () => {
+    const { getByText, queryByText, getByLabelText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    pokemons.forEach(({ name }, index) => {
+      fireEvent.click(getByText(/More details/i));
+      expect(getByLabelText('Pokémon favoritado?').type).toBe('checkbox');
+      fireEvent.click(getByLabelText('Pokémon favoritado?'));
+      expect(getByLabelText('Pokémon favoritado?').checked).toBe(true);
+      fireEvent.click(getByText('Favorite Pokémons'));
+      expect(getByText(name)).toBeInTheDocument();
+      fireEvent.click(getByText(/More details/i));
+      fireEvent.click(getByLabelText('Pokémon favoritado?'));
+      expect(getByLabelText('Pokémon favoritado?').checked).toBe(false);
+      fireEvent.click(getByText('Favorite Pokémons'));
+      expect(queryByText(name)).not.toBeInTheDocument();
+      fireEvent.click(getByText(/Home/));
+      for (let i = 0; i <= index; i += 1) {
+        fireEvent.click(getByText(/Próximo pokémon/));
+      }
+    });
   });
 
   it('The checkbox label must be "Pokémon favoritado"', () => {
-
+    const { getByText, getByLabelText } = render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    );
+    pokemons.forEach((pokemon, index) => {
+      fireEvent.click(getByText(/More details/i));
+      expect(getByLabelText('Pokémon favoritado?')).toBeInTheDocument();
+      fireEvent.click(getByText(/Home/));
+      for (let i = 0; i <= index; i += 1) {
+        fireEvent.click(getByText(/Próximo pokémon/));
+      }
+    });
   });
 });
 
