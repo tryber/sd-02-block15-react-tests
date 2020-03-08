@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
-import { render, fireEvent, cleanup } from '@testing-library/react';
+import { render, fireEvent, cleanup, getAllByRole } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import App from './App';
 import pokemons from './data';
@@ -534,18 +534,18 @@ describe('16 - Pokémons favoritados devem exibir um ícone de uma estrela', () 
     const checkbox = getByRole('checkbox');
 
     let arrayImagens = getAllByRole('img');
-    let temEstrela = arrayImagens.some((imagem) => imagem.src === "http://localhost/star-icon.svg");
-    expect(temEstrela).toBeFalsy();
+    let imagemEstrela = arrayImagens.find((imagem) => imagem.src === "http://localhost/star-icon.svg");
+    expect(imagemEstrela).not.toBeDefined();
 
     fireEvent.click(checkbox);
     arrayImagens = getAllByRole('img');
-    temEstrela = arrayImagens.some((imagem) => imagem.src === 'http://localhost/star-icon.svg');
-    expect(temEstrela).toBeTruthy();
+    imagemEstrela = arrayImagens.find((imagem) => imagem.src === "http://localhost/star-icon.svg");
+    expect(imagemEstrela).toBeInTheDocument();
 
     fireEvent.click(checkbox);
     arrayImagens = getAllByRole('img');
-    temEstrela = arrayImagens.some((imagem) => imagem.src === 'http://localhost/star-icon.svg');
-    expect(temEstrela).toBeFalsy();
+    imagemEstrela = arrayImagens.find((imagem) => imagem.src === "http://localhost/star-icon.svg");
+    expect(imagemEstrela).not.toBeDefined();
   });
 
   test('A imagem deve ter o atributo "alt" igual a "<pokemon> is marked as favorite"', () => {
@@ -560,5 +560,100 @@ describe('16 - Pokémons favoritados devem exibir um ícone de uma estrela', () 
     const imagemEstrela = arrayImagens.find((imagem) => imagem.src === "http://localhost/star-icon.svg");
 
     expect(imagemEstrela.alt).toBe(`${pokemons[0].name} is marked as favorite`);
+  });
+});
+
+describe('17 - No topo da aplicação, deve haver um conjunto fixo de links de navegação', () => {
+  test('O primeiro link deve possuir o texto "Home" com a URL "/"', () => {
+    const { getByRole } = renderWithRouter(<App />);
+
+    const navegacao = getByRole('navigation');
+    expect(navegacao).toBeInTheDocument();
+
+    const home = getByRole('navigation').firstChild;
+    expect(home).toBeInTheDocument();
+    expect(home.innerHTML).toBe('Home');
+    expect(home.href).toBe('http://localhost/');
+  });
+
+  test('O segundo link deve possuir o texto "About" com a URL "/about"', () => {
+    const { getByRole } = renderWithRouter(<App />);
+
+    const about = getByRole('navigation').firstChild.nextSibling;
+    expect(about).toBeInTheDocument();
+    expect(about.innerHTML).toBe('About');
+    expect(about.href).toBe('http://localhost/about');
+  });
+
+  test('O terceiro link deve possuir o texto "Favorite Pokémons" com a URL "/favorites"', () => {
+    const { getByRole } = renderWithRouter(<App />);
+
+    const favoritePokemons = getByRole('navigation').lastChild;
+    expect(favoritePokemons).toBeInTheDocument();
+    expect(favoritePokemons.innerHTML).toBe('Favorite Pokémons');
+    expect(favoritePokemons.href).toBe('http://localhost/favorites');
+  });
+});
+
+describe('18 - Ao clicar no link "Home" na barra de navegação, a aplicação deve ser redirecionada para a página inicial, na URL "/"', () => {
+  test('a partir da página inicial, redireciona para a própria página inicial', () => {
+    const { history, getByText } = renderWithRouter(<App />);
+
+    expect(history.location.pathname).toBe('/');
+
+    fireEvent.click(getByText('Home'));
+    expect(history.location.pathname).toBe('/');
+  });
+
+  test('a partir da página de detalhes do primeiro pokemon, redireciona para a página inicial', () => {
+    const { history, getByText } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+    expect(history.location.pathname).toBe(`/pokemons/${pokemons[0].id}`);
+
+    fireEvent.click(getByText('Home'));
+    expect(history.location.pathname).toBe('/');
+  });
+});
+
+describe('19 - Ao clicar no link "About" na barra de navegação, a aplicação deve ser redirecionada para a página de About, na URL "/about"', () => {
+  test('a partir da página inicial, redireciona para a página de About', () => {
+    const { history, getByText } = renderWithRouter(<App />);
+
+    expect(history.location.pathname).toBe('/');
+
+    fireEvent.click(getByText('About'));
+    expect(history.location.pathname).toBe('/about');
+  });
+
+  test('a partir da página de detalhes do primeiro pokemon, redireciona para a página de About', () => {
+    const { history, getByText } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+    expect(history.location.pathname).toBe(`/pokemons/${pokemons[0].id}`);
+
+    fireEvent.click(getByText('About'));
+    expect(history.location.pathname).toBe('/about');
+  });
+});
+
+describe('20 - Ao clicar no link "Favorite Pokémons" na barra de navegação, a aplicação deve ser redirecionada para a página de pokémons favoritados, na URL "/favorites"', () => {
+  test('a partir da página inicial, redireciona para a página de pokémons favoritados', () => {
+    const { history, getByText } = renderWithRouter(<App />);
+
+    expect(history.location.pathname).toBe('/');
+
+    fireEvent.click(getByText('Favorite Pokémons'));
+    expect(history.location.pathname).toBe('/favorites');
+  });
+
+  test('a partir da página de detalhes do primeiro pokemon, redireciona para a página de pokémons favoritados', () => {
+    const { history, getByText } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+    expect(history.location.pathname).toBe(`/pokemons/${pokemons[0].id}`);
+
+    fireEvent.click(getByText('Favorite Pokémons'));
+    expect(history.location.pathname).toBe('/favorites');
   });
 });
