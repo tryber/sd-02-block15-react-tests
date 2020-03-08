@@ -56,4 +56,40 @@ describe('Pokemon app.js tests', () => {
     expect(queryByText('Favorite Pokémons')).toBeInTheDocument();
     expect(queryByText('Favorite Pokémons').href).toBe(`${localhost}/favorites`);
   });
+
+  test('18 - Ao clicar no link "Home" na barra de navegação, a aplicação deve ser redirecionada...', () => {
+    const history = createMemoryHistory();
+    const { queryByText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+    fireEvent.click(queryByText('Home'));
+    const page = '/';
+    expect(history.location.pathname).toBe(page);
+  });
+
+  test('19 - Ao clicar no link "About" na barra de navegação, a aplicação deve ser redirecionada...', () => {
+    const history = createMemoryHistory();
+    const { queryByText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+    fireEvent.click(queryByText('About'));
+    const page = '/about';
+    expect(history.location.pathname).toBe(page);
+  });
+
+  test('20 - Ao clicar no link "Favorite Pokémons" na barra de navegação, a aplicação deve ser...', () => {
+    const history = createMemoryHistory();
+    const { queryByText } = render(
+      <Router history={history}>
+        <App />
+      </Router>,
+    );
+    fireEvent.click(queryByText('Favorite Pokémons'));
+    const page = '/favorites';
+    expect(history.location.pathname).toBe(page);
+  });
 });
