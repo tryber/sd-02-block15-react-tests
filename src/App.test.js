@@ -1,6 +1,7 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { render, cleanup, fireEvent, getByText, getByAltText } from '@testing-library/react';
+import { Router, MemoryRouter } from 'react-router-dom';
+import { createMemoryHistory } from 'history'
+import { render, cleanup, fireEvent } from '@testing-library/react';
 import pokemons from './types/mockPokemons';
 import App from './App';
 import '@testing-library/jest-dom'
@@ -156,5 +157,29 @@ test('9 - Pokedex needs show a link do Pokemon Details with a unique ID', () => 
     const { id } = pokemon;
     expect(getByText(/More details/i).href).toStrictEqual(`http://localhost/pokemons/${id}`);
     fireEvent.click(buttonNxtPkm);
+  });
+})
+
+test('10 - Navigation link of pokemon More details needs show URL /pokemon/id', async () => {
+  const history = createMemoryHistory();
+  const { getByText } = render(
+    <Router history={ history }>
+      <App />
+    </Router>,
+  );
+
+  const moreDetails = getByText(/More details/i, {selector: 'a'});
+  const home = getByText(/Home/i, {selector: 'a'});
+  const buttonNxtPkm = getByText(/Próximo pokémon/i, {selector: 'button'});
+  expect(getByText('Encountered pokémons')).toBeInTheDocument();
+  expect(moreDetails).toBeInTheDocument();
+  await pokemons.forEach((pokemon) => {
+          const { id, name } = pokemon;
+          for (let i = 0; i < pokemons.length; i += 1) {
+            if (pokemons[i].name !== name) return fireEvent.click(buttonNxtPkm);
+          }
+    fireEvent.click(moreDetails);
+    expect(history.location.pathname).toStrictEqual(`/pokemons/${id}`);
+    fireEvent.click(home);
   });
 })
