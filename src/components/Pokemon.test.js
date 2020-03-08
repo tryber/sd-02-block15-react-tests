@@ -8,19 +8,22 @@ afterEach(cleanup);
 
 describe('Pokemon Pokemon.js tests', () => {
   test('8 - A Pokedéx deve exibir o nome, tipo, peso médio e imagem do pokémon exibido', () => {
-    const { getByText, getByAltText } = render(
+    const { getByText, getByAltText, queryByText } = render(
       <MemoryRouter>
         <App />
       </MemoryRouter>,
     );
     const nextBtn = getByText(/Próximo pokémon/i);
     expect(nextBtn).toBeInTheDocument();
-    pokemonsMock.forEach(({ name, image, averageWeight }) => {
+    pokemonsMock.forEach(({ name, type, image, averageWeight }) => {
       const { value, measurementUnit } = averageWeight;
       const weightText = getByText(`Average weight: ${value} ${measurementUnit}`);
       const imageAlt = `${name} sprite`;
       const imageElem = getByAltText(imageAlt);
       const imageSrc = image;
+      // Exibição de nome e tipo
+      expect(queryByText(name, { selector: 'p' })).toBeInTheDocument();
+      expect(queryByText(type, { selector: 'p' })).toBeInTheDocument();
       // O peso médio do pokémon deve ser exibido com um texto no formato...
       expect(weightText).toBeInTheDocument();
       // A imagem deve conter um atributo src com a URL da imagem do pokémon...
