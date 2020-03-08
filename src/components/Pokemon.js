@@ -17,7 +17,7 @@ class Pokemon extends React.Component {
     return (
       <div className="pokemon">
         <div className="pokemon-overview">
-          <p>{name}</p>
+          <p data-testid="pokemon">{name}</p>
           <p>{type}</p>
           <p>{`Average weight: ${value} ${measurementUnit}`}</p>
           {showDetailsLink && <Link to={`pokemons/${id}`}>More details</Link>}
@@ -25,6 +25,7 @@ class Pokemon extends React.Component {
         <img src={image} alt={`${name} sprite`} />
         {isFavorite && (
           <img
+            data-testid="star-icon"
             className="favorite-icon"
             src="/star-icon.svg"
             alt={`${name} is marked as favorite`}

@@ -14,7 +14,7 @@ class PokemonDetails extends React.Component {
         <div className="pokemon-habitat">
           {foundAt.map(({ location, map }) => (
             <div key={location}>
-              <img src={map} alt={`${name} location`} />
+              <img src={map} alt={`${name} location`} data-testid={location} />
               <p><em>{location}</em></p>
             </div>
           ))}
