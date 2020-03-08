@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
-import { render, fireEvent, cleanup, getByTestId } from '@testing-library/react';
+import { render, fireEvent, cleanup, getByTestId, getByRole } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import App from './App';
 import pokemons from './data';
@@ -412,6 +412,88 @@ describe('12 - O pokémon exibido na página de detalhes não deve conter um lin
       for (let i = 0; i <= index; i += 1) {
         fireEvent.click(getByText('Próximo pokémon'));
       }
+    });
+  });
+});
+
+describe('13 - A página de detalhes deve exibir uma seção com um resumo do pokémon', () => {
+  test('A seção de detalhes deve conter um heading "h2" com o texto "Summary"', () => {
+    const { getByText } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+
+    const summaryH2 = getByText('Summary');
+    expect(summaryH2).toBeInTheDocument();
+    expect(summaryH2.tagName).toBe('H2');
+  });
+
+  test('A seção de detalhes deve conter um parágrafo com o resumo do pokémon específico sendo visualizado', () => {
+    const { getByText } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+
+    const summaryP = getByText(pokemons[0].summary);
+    expect(summaryP).toBeInTheDocument();
+    expect(summaryP.tagName).toBe('P');
+  });
+});
+
+describe('14 - A página de detalhes deve exibir uma seção com os mapas com as localizações do pokémon', () => {
+  test('A seção de detalhes deve conter um heading "h2" com o texto "Game Locations of <pokémon>"', () => {
+    const { getByText } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+
+    const locationsH2 = getByText(`Game Locations of ${pokemons[0].name}`);
+    expect(locationsH2).toBeInTheDocument();
+    expect(locationsH2.tagName).toBe('H2');
+  });
+
+  test('A seção de detalhes deve exibir todas as localizações do pokémon', () => {
+    const { getByText, getAllByTestId } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+
+    const locationsDIV = getAllByTestId('localizacao');
+    expect(locationsDIV.length).toBe(pokemons[0].foundAt.length);
+  });
+
+  test('Cada localização deve exibir o nome da localização e uma imagem do mapa da localização', () => {
+    const { getByText, getAllByTestId } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+
+    const locationsDIV = getAllByTestId('localizacao');
+    locationsDIV.forEach((location, index) => {
+      const localizacaoNome = getByText(pokemons[0].foundAt[index].location);
+      expect(localizacaoNome).toBeInTheDocument();
+
+      const localizacaoImagem = getAllByTestId('imagem-localizacao')[index];
+      expect(localizacaoImagem).toBeInTheDocument();
+    });
+  });
+
+  test('A imagem da localização deve ter um atributo "src" com a URL da localização', () => {
+    const { getByText, getAllByTestId } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+
+    const locationsDIV = getAllByTestId('localizacao');
+    locationsDIV.forEach((location, index) => {
+      const localizacaoImagem = getAllByTestId('imagem-localizacao')[index];
+      expect(localizacaoImagem.src).toBe(pokemons[0].foundAt[index].map);
+    });
+  });
+
+  test('A imagem da localização deve ter um atributo "alt" com o texto "<name> location"', () => {
+    const { getByText, getAllByTestId } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+
+    const locationsDIV = getAllByTestId('localizacao');
+    locationsDIV.forEach((location, index) => {
+      const localizacaoImagem = getAllByTestId('imagem-localizacao')[index];
+      expect(localizacaoImagem.alt).toBe(`${pokemons[0].name} location`);
     });
   });
 });
