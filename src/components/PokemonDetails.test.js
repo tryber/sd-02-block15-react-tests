@@ -1,7 +1,7 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import { render, fireEvent, cleanup, getAllByAltText } from '@testing-library/react';
+import { render, fireEvent, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import App from '../App';
 import pokemons from '../data';
@@ -25,7 +25,7 @@ describe('10 - when click the button "More Details" the page should redirect to 
         fireEvent.click(getByText(/Próximo pokémon/));
         // iteração necessária para ele clicar o número de vezes correspondente
         // para ir para o pokemon certo quando volta para a página Home
-        // sem isso ele volta sempre pro charmander e quebra no terceiro teste
+        // sem isso ele clica só uma vez, vai só até o charmander e quebra no terceiro teste
       }
     });
   });
