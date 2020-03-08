@@ -142,3 +142,19 @@ test('8 - Pokedex need shows Name, Type, Average Weight and an Image of listed p
     fireEvent.click(buttonNxtPkm);
   });
 })
+
+test('9 - Pokedex needs show a link do Pokemon Details with a unique ID', () => {
+  const { getByText } = render(
+    <MemoryRouter>
+      <App />
+    </MemoryRouter>,
+  );
+
+  expect(getByText(/More details/i)).toBeInTheDocument();
+  const buttonNxtPkm = getByText(/Próximo pokémon/i, {selector: 'button'});
+  pokemons.forEach((pokemon) => {
+    const { id } = pokemon;
+    expect(getByText(/More details/i).href).toStrictEqual(`http://localhost/pokemons/${id}`);
+    fireEvent.click(buttonNxtPkm);
+  });
+})
