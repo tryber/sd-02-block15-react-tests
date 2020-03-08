@@ -25,6 +25,7 @@ class Pokemon extends React.Component {
         <img src={image} alt={`${name} sprite`} />
         {isFavorite && (
           <img
+            data-testid="star-icon"
             className="favorite-icon"
             src="/star-icon.svg"
             alt={`${name} is marked as favorite`}
