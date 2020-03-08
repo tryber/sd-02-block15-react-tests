@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { render, cleanup, fireEvent, getByText } from '@testing-library/react';
+import { render, cleanup, fireEvent, getByText, getByAltText } from '@testing-library/react';
 import pokemons from './types/mockPokemons';
 import App from './App';
 import '@testing-library/jest-dom'
@@ -120,5 +120,25 @@ test('7 - Button - Próximo pokémon - needs to be disabled when there is only 1
       const buttonNxtPkm = getByText(/Próximo pokémon/i, {selector: 'button'});
       expect(buttonNxtPkm).toBeDisabled();
     }
+  });
+})
+
+test('8 - Pokedex need shows Name, Type, Average Weight and an Image of listed pokemon', () => {
+  const { getByText, queryByText, getByAltText } = render(
+    <MemoryRouter>
+      <App />
+    </MemoryRouter>,
+  );
+
+  const buttonNxtPkm = getByText(/Próximo pokémon/i, {selector: 'button'});
+  pokemons.forEach((pokemon) => {
+    const { name, type, averageWeight: { value, measurementUnit }, image } = pokemon;
+    const imageAlt = getByAltText(`${name} sprite`);
+    expect(getByText(name)).toBeInTheDocument();
+    expect(queryByText(type, { selector: 'p' })).toBeInTheDocument();
+    expect(getByText(`Average weight: ${value} ${measurementUnit}`)).toBeInTheDocument();
+    expect(imageAlt).toBeInTheDocument();
+    expect(image).toStrictEqual(imageAlt.src);
+    fireEvent.click(buttonNxtPkm);
   });
 })
