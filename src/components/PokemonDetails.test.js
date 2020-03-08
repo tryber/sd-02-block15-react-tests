@@ -248,16 +248,22 @@ describe('16 - Favorite Pokémon should display a star icon', () => {
         <App />
       </MemoryRouter>,
     );
-    // pokemons.forEach(({ name }, index) => {
-    //   fireEvent.click(getByText(/More details/i));
-    //   fireEvent.click(getByLabelText('Pokémon favoritado?'));
-    //   expect(getByTestId('star-icon').alt).toBe(`${name} is marked as favorite`);
-    //   fireEvent.click(getByLabelText('Pokémon favoritado?'));
-    //   expect(queryByTestId('star-icon')).not.toBeInTheDocument();
-    //   fireEvent.click(getByText(/Home/));
-    //   for (let i = 0; i <= index; i += 1) {
-    //     fireEvent.click(getByText(/Próximo pokémon/));
-    //   }
-    // });
+    pokemons.forEach(({ name }, index) => {
+      fireEvent.click(getByText(/More details/i));
+      fireEvent.click(getByLabelText('Pokémon favoritado?'));
+      expect(getByTestId('star-icon').alt).toBe(`${name} is marked as favorite`);
+      fireEvent.click(getByText(/Home/));
+      for (let i = 0; i < index; i += 1) {
+        fireEvent.click(getByText(/Próximo pokémon/));
+      }
+      expect(getByTestId('star-icon').alt).toBe(`${name} is marked as favorite`);
+      fireEvent.click(getByText(/More details/i));
+      fireEvent.click(getByLabelText('Pokémon favoritado?'));
+      expect(queryByTestId('star-icon')).not.toBeInTheDocument();
+      fireEvent.click(getByText(/Home/));
+      for (let i = 0; i <= index; i += 1) {
+        fireEvent.click(getByText(/Próximo pokémon/));
+      }
+    });
   });
 });
