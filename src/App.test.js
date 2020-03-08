@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
-import { render, fireEvent, cleanup, getByTestId, getByRole } from '@testing-library/react';
+import { render, fireEvent, cleanup } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import App from './App';
 import pokemons from './data';
@@ -495,5 +495,70 @@ describe('14 - A página de detalhes deve exibir uma seção com os mapas com as
       const localizacaoImagem = getAllByTestId('imagem-localizacao')[index];
       expect(localizacaoImagem.alt).toBe(`${pokemons[0].name} location`);
     });
+  });
+});
+
+describe('15 - A página de detalhes deve permitir favoritar um pokémon', () => {
+  test('A página deve conter um checkbox que permita favoritar um pokémon', () => {
+    const { getByText, getByRole } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+
+    const checkbox = getByRole('checkbox');
+    expect(checkbox).toBeInTheDocument();
+
+    expect(checkbox.checked).toBeFalsy();
+    fireEvent.click(checkbox);
+    expect(checkbox.checked).toBeTruthy();
+    fireEvent.click(checkbox);
+    expect(checkbox.checked).toBeFalsy();
+  });
+
+  test('O label do checkbox deve ser "Pokémon favoritado?"', () => {
+    const { getByText, getByRole } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+
+    const checkbox = getByRole('checkbox');
+    expect(checkbox.parentNode.tagName).toBe('LABEL');
+    expect(checkbox.parentNode.innerHTML).toMatch('Pokémon favoritado?');
+  });
+});
+
+describe('16 - Pokémons favoritados devem exibir um ícone de uma estrela', () => {
+  test('O ícone deve ser uma imagem, com o atributo "src" igual "/star-icon.svg"', () => {
+    const { getByText, getByRole, getAllByRole } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+
+    const checkbox = getByRole('checkbox');
+
+    let arrayImagens = getAllByRole('img');
+    let temEstrela = arrayImagens.some((imagem) => imagem.src === "http://localhost/star-icon.svg");
+    expect(temEstrela).toBeFalsy();
+
+    fireEvent.click(checkbox);
+    arrayImagens = getAllByRole('img');
+    temEstrela = arrayImagens.some((imagem) => imagem.src === 'http://localhost/star-icon.svg');
+    expect(temEstrela).toBeTruthy();
+
+    fireEvent.click(checkbox);
+    arrayImagens = getAllByRole('img');
+    temEstrela = arrayImagens.some((imagem) => imagem.src === 'http://localhost/star-icon.svg');
+    expect(temEstrela).toBeFalsy();
+  });
+
+  test('A imagem deve ter o atributo "alt" igual a "<pokemon> is marked as favorite"', () => {
+    const { getByText, getByRole, getAllByRole } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('More details'));
+
+    const checkbox = getByRole('checkbox');
+    fireEvent.click(checkbox);
+
+    const arrayImagens = getAllByRole('img');
+    const imagemEstrela = arrayImagens.find((imagem) => imagem.src === "http://localhost/star-icon.svg");
+
+    expect(imagemEstrela.alt).toBe(`${pokemons[0].name} is marked as favorite`);
   });
 });
