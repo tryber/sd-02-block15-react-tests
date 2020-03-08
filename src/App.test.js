@@ -1,8 +1,9 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
-import { render, fireEvent, cleanup, getAllByRole } from '@testing-library/react';
+import { render, fireEvent, cleanup, getAllByRole, getByRole, getAllByTestId } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import App from './App';
+import FavoritePokemons from './components/FavoritePokemons';
 import pokemons from './data';
 
 function renderWithRouter(
@@ -655,5 +656,94 @@ describe('20 - Ao clicar no link "Favorite Pokémons" na barra de navegação, a
 
     fireEvent.click(getByText('Favorite Pokémons'));
     expect(history.location.pathname).toBe('/favorites');
+  });
+});
+
+describe('21 - A página "About" deve exibir informações sobre a Pokédex', () => {
+  test('A página deve conter um heading "h2" com o texto "About Pokédex"', () => {
+    const { getByText } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('About'));
+
+    const headingH2 = getByText('About Pokédex');
+    expect(headingH2).toBeInTheDocument();
+    expect(headingH2.tagName).toBe('H2');
+  });
+
+  test('A página deve conter dois parágrafos com texto sobre a Pokédex', () => {
+    const { getByText, getAllByTestId } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('About'));
+
+    expect(document.getElementsByTagName('p').length).toBe(2);
+
+    const paragrafosDescricao = getAllByTestId('paragrafo-descricao');
+    paragrafosDescricao.forEach((paragrafo) => {
+      expect(paragrafo).toBeInTheDocument();
+    });
+  });
+
+  test('A página deve conter a seguinte imagem de uma Pokédex: "https://cdn.bulbagarden.net/upload/thumb/8/86/Gen_I_Pok%C3%A9dex.png/800px-Gen_I_Pok%C3%A9dex.png"', () => {
+    const { getByText, getByRole } = renderWithRouter(<App />);
+
+    fireEvent.click(getByText('About'));
+
+    const imagemPokedex = getByRole('img');
+    expect(imagemPokedex).toBeInTheDocument();
+    expect(imagemPokedex.src).toBe('https://cdn.bulbagarden.net/upload/thumb/8/86/Gen_I_Pok%C3%A9dex.png/800px-Gen_I_Pok%C3%A9dex.png');
+  });
+});
+
+describe('22 - A página de pokémon favoritos deve exibir os pokémons favoritos', () => {
+  test('simulação com lista vazia de pokémons favoritados', () => {
+    const favoritos = [];
+
+    const { queryByText, getByText } = renderWithRouter(<FavoritePokemons pokemons={favoritos} />);
+
+    pokemons.forEach(pokemon => {
+      expect(queryByText(pokemon.name)).toBeNull();
+    });
+
+    expect(getByText('No favorite pokemon found')).toBeInTheDocument();
+  });
+
+  test('simulação com lista de pokémons cujo id é maior que 50', () => {
+    const favoritos = pokemons.filter((pokemon) => pokemon.id > 50);
+    const { getByText, queryByText } = renderWithRouter(<FavoritePokemons pokemons={favoritos} />);
+
+    favoritos.forEach((pokemon) => {
+      expect(getByText(pokemon.name)).toBeInTheDocument();
+    });
+
+    const naoFavoritos = pokemons.filter(pokemon => pokemon.id <= 50);
+    naoFavoritos.forEach(pokemon => {
+      expect(queryByText(pokemon.name)).toBeNull();
+    });
+
+    expect(queryByText('No favorite pokemon found')).toBeNull();
+  });
+});
+
+describe('23 - Entrar em uma URL desconhecida exibe a página "Not Found"', () => {
+  test('A página deve conter um heading "h2" com o texto "Page requested not found 😭"', () => {
+    const { getByText } = renderWithRouter(
+      <App />,
+      { route: '/aaaaa' }
+    );
+
+    const headingH2 = getByText(/Page requested not found/);
+    expect(headingH2).toBeInTheDocument();
+    expect(headingH2.tagName).toBe('H2');
+  });
+
+  test('A página deve exibir a imagem "https://media.giphy.com/media/kNSeTs31XBZ3G/giphy.gif"', () => {
+    const { getAllByRole } = renderWithRouter(
+      <App />,
+      { route: '/aaaaa' }
+    );
+
+    const imagemGif = getAllByRole('img')[1];
+    expect(imagemGif).toBeInTheDocument();
+    expect(imagemGif.src).toBe('https://media.giphy.com/media/kNSeTs31XBZ3G/giphy.gif');
   });
 });
