@@ -323,3 +323,95 @@ describe('9 - O pokémon exibido na Pokedéx deve conter um link de navegação 
     });
   });
 });
+
+describe('10 - Ao clicar no link de navegação do pokémon, a aplicação deve ser redirecionada para a página de detalhes de pokémon', () => {
+  test('A URL exibida no navegador deve mudar para "/pokemons/<id>"', () => {
+    const { history, getByText } = renderWithRouter(<App />);
+
+    expect(history.location.pathname).toBe('/');
+
+    fireEvent.click(getByText('More details'));
+    expect(history.location.pathname).toBe(`/pokemons/${pokemons[0].id}`);
+  });
+});
+
+describe('11 - A página de detalhes de pokémon deve exibir o nome, tipo, peso médio e imagem do pokémon exibido', () => {
+  test('exibe nome e tipo', () => {
+    const { getByText, history } = renderWithRouter(<App />);
+
+    pokemons.forEach((pokemon, index) => {
+      const linkDetalhes = getByText('More details');
+      fireEvent.click(linkDetalhes);
+
+      const name = getByText(pokemon.name);
+      expect(name).toBeInTheDocument();
+
+      const type = getByText(pokemon.type);
+      expect(type).toBeInTheDocument();
+
+      history.push('/');
+
+      const botaoProximoPokemon = getByText('Próximo pokémon');
+      for (let i = 0; i <= index; i += 1) {
+        fireEvent.click(botaoProximoPokemon);
+      }
+    });
+  });
+
+  test('O peso médio do pokémon deve ser exibido com um texto no formato "Average weight: <value> <measurementUnit>"', () => {
+    const { getByText, history } = renderWithRouter(<App />);
+
+    pokemons.forEach((pokemon, index) => {
+      const linkDetalhes = getByText('More details');
+      fireEvent.click(linkDetalhes);
+
+      const averageWeight = getByText(`Average weight: ${pokemon.averageWeight.value} ${pokemon.averageWeight.measurementUnit}`);
+      expect(averageWeight).toBeInTheDocument();
+
+      history.push('/');
+
+      const botaoProximoPokemon = getByText('Próximo pokémon');
+      for (let i = 0; i <= index; i += 1) {
+        fireEvent.click(botaoProximoPokemon);
+      }
+    });
+  });
+
+  test('A imagem deve conter um atributo src com a URL da imagem do pokémon e um atributo alt com o nome do pokémon', () => {
+    const { getByAltText, getByText, history } = renderWithRouter(<App />);
+
+    pokemons.forEach((pokemon, index) => {
+      const linkDetalhes = getByText('More details');
+      fireEvent.click(linkDetalhes);
+
+      const image = getByAltText(`${pokemon.name} sprite`);
+      expect(image).toBeInTheDocument();
+      expect(image.src).toBe(pokemon.image);
+
+      history.push('/');
+
+      const botaoProximoPokemon = getByText('Próximo pokémon');
+      for (let i = 0; i <= index; i += 1) {
+        fireEvent.click(botaoProximoPokemon);
+      }
+    });
+  });
+});
+
+describe('12 - O pokémon exibido na página de detalhes não deve conter um link de navegação para exibir detalhes deste pokémon', () => {
+  test('não exibe link "More details"', () => {
+    const { getByText, history, queryByText } = renderWithRouter(<App />);
+
+    pokemons.forEach((index) => {
+      fireEvent.click(getByText('More details'));
+
+      expect(queryByText('More details')).toBeNull();
+
+      history.push('/');
+
+      for (let i = 0; i <= index; i += 1) {
+        fireEvent.click(getByText('Próximo pokémon'));
+      }
+    });
+  });
+});
