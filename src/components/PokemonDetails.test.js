@@ -224,7 +224,7 @@ describe('16 - Favorite Pokémon should display a star icon', () => {
     pokemons.forEach((pokemon, index) => {
       fireEvent.click(getByText(/More details/i));
       fireEvent.click(getByLabelText('Pokémon favoritado?'));
-      expect(getByTestId('star-icon')).toBeInTheDocument();
+      expect(getByTestId('star-icon', { selector: 'img' })).toBeInTheDocument();
       expect(getByTestId('star-icon').src).toMatch('/star-icon.svg');
       fireEvent.click(getByText(/Home/));
       for (let i = 0; i < index; i += 1) {

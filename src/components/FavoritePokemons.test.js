@@ -30,5 +30,15 @@ describe('The favorite Pokémon page should display favorite Pokémon', () => {
         expect(queryByText(name)).not.toBeInTheDocument();
       }
     });
+
+    // testando o teste
+    expect(getByText('Pikachu')).toBeInTheDocument();
+    expect(getByText('Charmander')).toBeInTheDocument();
+    expect(queryByText('Caterpie')).not.toBeInTheDocument();
+    expect(queryByText('Alakazam')).not.toBeInTheDocument();
+    expect(queryByText('Mew')).not.toBeInTheDocument();
+    expect(queryByText('Rapidash')).not.toBeInTheDocument();
+    expect(queryByText('Snorlax')).not.toBeInTheDocument();
+    expect(queryByText('Dragonair')).not.toBeInTheDocument();
   });
 });
