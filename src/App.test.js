@@ -104,3 +104,21 @@ test('6 - Pokedex needs to generate a filter button for each type of pokemon', (
     fireEvent.click(buttonNxtPkm);
   });
 })
+
+test('7 - Button - Próximo pokémon - needs to be disabled when there is only 1 type', () => {
+  const { getByText } = render(
+    <MemoryRouter>
+      <App />
+    </MemoryRouter>,
+  );
+
+  const typesfiltered = [...new Set(pokemons.map((pokemon) =>  pokemon.type))];
+  typesfiltered.forEach((type) => {
+    const pkmnFiltered = pokemons.filter((pokemon) => pokemon.type === type);
+    fireEvent.click(getByText(type, {selector: 'button'}));
+    if (pkmnFiltered.length === 1) {
+      const buttonNxtPkm = getByText(/Próximo pokémon/i, {selector: 'button'});
+      expect(buttonNxtPkm).toBeDisabled();
+    }
+  });
+})
