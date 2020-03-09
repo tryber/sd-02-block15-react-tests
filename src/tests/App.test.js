@@ -356,7 +356,7 @@ test('21', () => {
   const aboutHeader = getByTestId('about');
   expect((aboutHeader).closest('h2'));
 });
-test('22', () => {
+test.skip('22', () => {
   const { getByText, getByTestId, getByLabelText } = render(
     <MemoryRouter initialEntries={['/']}>
       <App />
