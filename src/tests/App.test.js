@@ -7,7 +7,7 @@ import Pokemon from '../data';
 
 afterEach(cleanup);
 
-test.skip('renders a reading with the text `Pokédex`', () => {
+test('renders a reading with the text `Pokédex`', () => {
   const { getByText } = render(
     <MemoryRouter>
       <App />
@@ -17,7 +17,7 @@ test.skip('renders a reading with the text `Pokédex`', () => {
   expect(heading).toBeInTheDocument();
 });
 
-test.skip('1- shows the Pokedéx when the route is `/`', () => {
+test('1- shows the Pokedéx when the route is `/`', () => {
   const { getByText } = render(
     <MemoryRouter initialEntries={['/']}>
       <App />
@@ -27,7 +27,7 @@ test.skip('1- shows the Pokedéx when the route is `/`', () => {
   expect(getByText('Encountered pokémons')).toBeInTheDocument();
 });
 
-test.skip('2- shows only one Pokemon on render', () => {
+test('2- shows only one Pokemon on render', () => {
   const { getAllByText } = render(
     <MemoryRouter initialEntries={['/']}>
       <App />
@@ -37,7 +37,7 @@ test.skip('2- shows only one Pokemon on render', () => {
   expect(onePokemon).toBe(1);
 });
 
-describe.skip('3- After clicking next, the page must exhibit the next pokemon from list', () => {
+describe('3- After clicking next, the page must exhibit the next pokemon from list', () => {
   test('3.1 - The button must contain "Proximo Pokémon"', () => {
     const { getByText } = render(
       <MemoryRouter initialEntries={['/']}>
@@ -78,7 +78,7 @@ describe.skip('3- After clicking next, the page must exhibit the next pokemon fr
   });
 });
 
-describe.skip('4- Pokedéx must contain filter buttons', () => {
+describe('4- Pokedéx must contain filter buttons', () => {
   test('4.1- Starting from one type to another, Pokedéx must show only pokemons from that type', () => {
     const { getByText, getByTestId } = render(
       <MemoryRouter initialEntries={['/']}>
@@ -110,7 +110,7 @@ describe.skip('4- Pokedéx must contain filter buttons', () => {
     });
   });
 });
-describe.skip('5- Pokédex must have a button to reset filters', () => {
+describe('5- Pokédex must have a button to reset filters', () => {
   test("5.1- Button's text must be 'All'", () => {
     const { getByTestId } = render(
       <MemoryRouter initialEntries={['/']}>
@@ -144,7 +144,7 @@ describe.skip('5- Pokédex must have a button to reset filters', () => {
     });
   });
 });
-test.skip('6- Pokédex must generate, dinamically, a filter button for every pokémon type', () => {
+test('6- Pokédex must generate, dinamically, a filter button for every pokémon type', () => {
   const { getByTestId, getByText } = render(
     <MemoryRouter initialEntries={['/']}>
       <App />
@@ -166,7 +166,7 @@ test.skip('6- Pokédex must generate, dinamically, a filter button for every pok
     }
   });
 });
-test.skip('7- Button "Próximo Pokémon" must be disabled if the filtered list has only one pokémon', () => {
+test('7- Button "Próximo Pokémon" must be disabled if the filtered list has only one pokémon', () => {
   const { getByTestId, getByText } = render(
     <MemoryRouter initialEntries={['/']}>
       <App />
@@ -183,7 +183,7 @@ test.skip('7- Button "Próximo Pokémon" must be disabled if the filtered list h
     }
   });
 });
-test.skip('8- Pokedéx must exhibit name, type, averageweight and image from current pokémon', () => {
+test('8- Pokedéx must exhibit name, type, averageweight and image from current pokémon', () => {
   const { queryByAltText, queryByText, getByText } = render(
     <MemoryRouter>
       <App />
@@ -198,7 +198,7 @@ test.skip('8- Pokedéx must exhibit name, type, averageweight and image from cur
     fireEvent.click(nextPokemonButton);
   });
 });
-test.skip("9- Verify if there's a link named 'more details' on pokemon section", () => {
+test("9- Verify if there's a link named 'more details' on pokemon section", () => {
   const { getByText } = render(
     <MemoryRouter>
       <App />
@@ -210,7 +210,7 @@ test.skip("9- Verify if there's a link named 'more details' on pokemon section",
   expect((moreDetailsButton).closest('a'));
   expect(moreDetailsButton).toHaveAttribute('href', `/pokemons/${pokeName[0]}`);
 });
-test.skip("10- When clicking on pokemón's navigation link, the application must be redirected to pokémon's detail page", () => {
+test("10- When clicking on pokemón's navigation link, the application must be redirected to pokémon's detail page", () => {
   const history = createMemoryHistory();
   const { getByText } = render(
     <Router history={history}>
@@ -221,7 +221,7 @@ test.skip("10- When clicking on pokemón's navigation link, the application must
   fireEvent.click(moreDetailsButton);
   expect(history.location.pathname).toBe('/pokemons/25');
 });
-test.skip("11- Pokemon details' page must exhibit name, type, average weight and image from chosen pokemon", () => {
+test("11- Pokemon details' page must exhibit name, type, average weight and image from chosen pokemon", () => {
   const { getByText, queryByText, queryByAltText } = render(
     <MemoryRouter>
       <App />
@@ -234,7 +234,7 @@ test.skip("11- Pokemon details' page must exhibit name, type, average weight and
   expect(queryByAltText(`${Pokemon[0].name} sprite`)).toBeInTheDocument();
   expect(queryByAltText(`${Pokemon[0].name} sprite`).src).toBeTruthy();
 });
-test.skip('12- The shown Pokémon must not contain a navigation link to show more details about this pokemon', () => {
+test('12- The shown Pokémon must not contain a navigation link to show more details about this pokemon', () => {
   const history = createMemoryHistory();
   const { getByText, queryByText } = render(
     <Router history={history}>
@@ -245,7 +245,7 @@ test.skip('12- The shown Pokémon must not contain a navigation link to show mor
   fireEvent.click(moreDetailsButton);
   expect(queryByText('More details')).toBeNull();
 });
-test.skip("13- Details' page must show a section with the chosen pokemon's summary", () => {
+test("13- Details' page must show a section with the chosen pokemon's summary", () => {
   const history = createMemoryHistory();
   const { getByText, getByTestId } = render(
     <Router history={history}>
@@ -259,7 +259,7 @@ test.skip("13- Details' page must show a section with the chosen pokemon's summa
   expect((checkSummary).closest('h2'));
   expect(checkText).toBeInTheDocument();
 });
-test.skip("14- Details page must show a section with the Pokemon's game locations' maps", () => {
+test("14- Details page must show a section with the Pokemon's game locations' maps", () => {
   const history = createMemoryHistory();
   const { getByText, getByTestId, queryByText } = render(
     <Router history={history}>
@@ -279,7 +279,7 @@ test.skip("14- Details page must show a section with the Pokemon's game location
     expect(getByTestId(location).alt).toBe(`${name} location`);
   });
 });
-test.skip('15, 16- Details page must allow to check a pokemon as favorite', () => {
+test('15, 16- Details page must allow to check a pokemon as favorite', () => {
   const history = createMemoryHistory();
   const { getByText, getByTestId, getByLabelText } = render(
     <Router history={history}>
@@ -355,6 +355,23 @@ test('21', () => {
   fireEvent.click(aboutButton);
   const aboutHeader = getByTestId('about');
   expect((aboutHeader).closest('h2'));
+});
+test('22', () => {
+  const { getByText, getByTestId, getByLabelText } = render(
+    <MemoryRouter initialEntries={['/']}>
+      <App />
+    </MemoryRouter>,
+  );
+
+  const moreDetailsButton = getByText('More details');
+  fireEvent.click(moreDetailsButton);
+  const favoriteButton = getByTestId('favorite-button');
+  expect(favoriteButton).toBeInTheDocument();
+  expect(getByLabelText('Pokémon favoritado?')).toBeInTheDocument();
+  fireEvent.click(favoriteButton);
+  const favorites = getByText('Favorite Pokémons', { selector: 'a' });
+  fireEvent.click(favorites);
+  expect(getByText('Pikachu')).toBeInTheDocument();
 });
 test('23', () => {
   const { getByText, getByAltText } = render(
