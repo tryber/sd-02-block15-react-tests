@@ -282,3 +282,25 @@ test ('15 - In details page, you can favorite a pokemon', () => {
     }
   });
 })
+
+test ('16 - When favorite input is clicked, details page shows a star img', () => {
+  const { getByTestId, history, getByText, getAllByRole } = renderWithRouter(<App />);
+
+  pokemons.forEach((index) => {
+    fireEvent.click(getByText('More details'));
+    const checkBox = getByTestId('checkbox', {selector: 'input'});
+    expect(checkBox).toBeInTheDocument();
+    fireEvent.click(checkBox);
+    let imgArr = getAllByRole('img');
+    let starChecked = imgArr.find((imagem) => imagem.src === "http://localhost/star-icon.svg");
+    expect(checkBox).toBeChecked();
+    expect(starChecked).toBeInTheDocument();
+    fireEvent.click(checkBox);
+    expect(checkBox).not.toBeChecked();
+    expect(starChecked).not.toBeInTheDocument();
+    history.push('/');
+    for (let i = 0; i <= index; i += 1) {
+      fireEvent.click(getByText('Próximo pokémon'));
+    }
+  });
+})
