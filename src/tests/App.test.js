@@ -371,6 +371,7 @@ test('22', () => {
   fireEvent.click(getByText('Home'));
   history.push('/favorites');
   expect(getByText('Pikachu')).toBeInTheDocument();
+  expect(queryByText('Charmander')).not.toBeInTheDocument();
 });
 test('23', () => {
   const { getByText, getByAltText } = render(
