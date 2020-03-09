@@ -304,3 +304,17 @@ test ('16 - When favorite input is clicked, details page shows a star img', () =
     }
   });
 })
+
+test ('17 - The top of page need shows a fix link to navigate', () => {
+  const { getByText } = renderWithRouter(<App />);
+
+  const home = getByText(/Home/i, {selector: 'a'});
+  const about = getByText(/About/i, {selector: 'a'});
+  const favoritePkmn = getByText(/Favorite Pokémons/i, {selector: 'a'});
+  expect(home).toBeInTheDocument();
+  expect(about).toBeInTheDocument();
+  expect(favoritePkmn).toBeInTheDocument();
+  expect(home.href).toStrictEqual('http://localhost/');
+  expect(about.href).toStrictEqual('http://localhost/about');
+  expect(favoritePkmn.href).toStrictEqual('http://localhost/favorites');
+})
