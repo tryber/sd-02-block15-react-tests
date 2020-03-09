@@ -327,3 +327,21 @@ test ('18 - When click on Home, app need redirect to URL /', () => {
   fireEvent.click(home);
   expect(history.location.pathname).toStrictEqual('/');
 })
+
+test ('19 - When click on About, app need redirect to URL /about', () => {
+  const { getByText, history } = renderWithRouter(<App />);
+
+  const about = getByText(/About/i, {selector: 'a'});
+  expect(about).toBeInTheDocument();
+  fireEvent.click(about);
+  expect(history.location.pathname).toStrictEqual('/about');
+})
+
+test ('20 - When click on Favorite Pokémons, app need redirect to URL /favorites', () => {
+  const { getByText, history } = renderWithRouter(<App />);
+
+  const favoritePkmn = getByText(/Favorite Pokémons/i, {selector: 'a'});
+  expect(favoritePkmn).toBeInTheDocument();
+  fireEvent.click(favoritePkmn);
+  expect(history.location.pathname).toStrictEqual('/favorites');
+})
