@@ -357,7 +357,8 @@ test('21', () => {
   expect((aboutHeader).closest('h2'));
 });
 test('22', () => {
-  const { getByText, queryByText, getByLabelText, getByAltText } = render(
+  const history = createMemoryHistory();
+  const { getByText, queryByText, getByLabelText } = render(
     <MemoryRouter>
       <App />
     </MemoryRouter>,
@@ -368,8 +369,8 @@ test('22', () => {
   expect(favoriteButton).toBeInTheDocument();
   fireEvent.click(favoriteButton);
   fireEvent.click(getByText('Home'));
-  fireEvent.click(getByText('Favorite Pokémons'));
-  expect(queryByText('Charmander')).not.toBeInTheDocument();
+  history.push('/favorites');
+  expect(getByText('Pikachu')).toBeInTheDocument();
 });
 test('23', () => {
   const { getByText, getByAltText } = render(
