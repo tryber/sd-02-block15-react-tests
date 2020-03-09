@@ -61,6 +61,7 @@ describe('22 - Favorite pokemon page should display favorite pokémons', () => {
     const favorites = getByText('Favorite Pokémons', { selector: 'a' });
     fireEvent.click(favorites);
     expect(getByText('Pikachu')).toBeInTheDocument();
+
     expect(queryByText('No favorite pokemon found')).toBeNull();
   });
 });
