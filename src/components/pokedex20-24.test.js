@@ -2,6 +2,7 @@ import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import { Router, MemoryRouter } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
+import FavoritePokemons from './FavoritePokemons';
 import App from '../App';
 
 afterEach(cleanup);
@@ -46,7 +47,9 @@ describe('21 -"About" page should display information about Pokédex', () => {
 
 describe('22 - Favorite pokemon page should display favorite pokémons', () => {
   it('Must display all favored Pokémon + must not display any non-favored Pokémon.', () => {
-    const { getByText, getByTestId, getByLabelText } = render(
+    const {
+      getByText, getByTestId, getByLabelText, queryByText,
+    } = render(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>,
@@ -60,6 +63,7 @@ describe('22 - Favorite pokemon page should display favorite pokémons', () => {
     const favorites = getByText('Favorite Pokémons', { selector: 'a' });
     fireEvent.click(favorites);
     expect(getByText('Pikachu')).toBeInTheDocument();
+    expect(queryByText('No favorite pokemon found')).toBeNull();
   });
 });
 
