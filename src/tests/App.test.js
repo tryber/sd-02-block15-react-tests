@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
-import { render, cleanup, fireEvent, getAllByAltText, getByAltText } from '@testing-library/react';
+import { render, cleanup, fireEvent } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import App from '../App';
 import Pokemon from '../data';
@@ -356,22 +356,20 @@ test('21', () => {
   const aboutHeader = getByTestId('about');
   expect((aboutHeader).closest('h2'));
 });
-test.skip('22', () => {
-  const { getByText, getByTestId, getByLabelText } = render(
-    <MemoryRouter initialEntries={['/']}>
+test('22', () => {
+  const { getByText, queryByText, getByLabelText, getByAltText } = render(
+    <MemoryRouter>
       <App />
     </MemoryRouter>,
   );
-
   const moreDetailsButton = getByText('More details');
   fireEvent.click(moreDetailsButton);
-  const favoriteButton = getByTestId('favorite-button');
+  const favoriteButton = getByLabelText('Pokémon favoritado?');
   expect(favoriteButton).toBeInTheDocument();
-  expect(getByLabelText('Pokémon favoritado?')).toBeInTheDocument();
   fireEvent.click(favoriteButton);
-  const favorites = getByText('Favorite Pokémons', { selector: 'a' });
-  fireEvent.click(favorites);
-  expect(getByText('Pikachu')).toBeInTheDocument();
+  fireEvent.click(getByText('Home'));
+  fireEvent.click(getByText('Favorite Pokémons'));
+  expect(queryByText('Charmander')).not.toBeInTheDocument();
 });
 test('23', () => {
   const { getByText, getByAltText } = render(
