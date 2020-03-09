@@ -264,3 +264,21 @@ test ('14 - Details page needs show a section with maps and localization of poke
     }
   });
 })
+
+test ('15 - In details page, you can favorite a pokemon', () => {
+  const { getByTestId, history, getByText } = renderWithRouter(<App />);
+
+  pokemons.forEach((index) => {
+    fireEvent.click(getByText('More details'));
+    const checkBox = getByTestId('checkbox', {selector: 'input'});
+    expect(checkBox).toBeInTheDocument();
+    fireEvent.click(checkBox);
+    expect(checkBox).toBeChecked();
+    fireEvent.click(checkBox);
+    expect(checkBox).not.toBeChecked();
+    history.push('/');
+    for (let i = 0; i <= index; i += 1) {
+      fireEvent.click(getByText('Próximo pokémon'));
+    }
+  });
+})
