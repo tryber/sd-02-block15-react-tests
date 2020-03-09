@@ -78,7 +78,7 @@ class PokemonDetails extends React.Component {
 
     return (
       <section className="pokemon-details">
-        <h2>{`${pokemon.name} Details`}</h2>
+        <h2 data-testid="moreDetails">{`${pokemon.name} Details`}</h2>
         <Pokemon
           pokemon={pokemon}
           showDetailsLink={false}

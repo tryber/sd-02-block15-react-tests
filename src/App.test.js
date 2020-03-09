@@ -6,6 +6,16 @@ import pokemons from './types/mockPokemons';
 import App from './App';
 import '@testing-library/jest-dom'
 
+function renderWithRouter(
+  ui,
+  { route = '/', history = createMemoryHistory({ initialEntries: [route] }) } = {},
+) {
+  return {
+    ...render(<Router history={history}>{ui}</Router>),
+    history,
+  };
+}
+
 afterEach(cleanup)
 
 test('1 - renders a reading with the text `Pokédex`', () => {
@@ -160,7 +170,7 @@ test('9 - Pokedex needs show a link do Pokemon Details with a unique ID', () => 
   });
 })
 
-test('10 - Navigation link of pokemon More details needs show URL /pokemon/id', () => {
+test('10 - Navigation link of pokemon More details needs show URL with id when clicked', () => {
   const history = createMemoryHistory();
   const { getByText } = render(
     <Router history={ history }>
@@ -171,7 +181,10 @@ test('10 - Navigation link of pokemon More details needs show URL /pokemon/id', 
   pokemons.forEach((pokemon) => {
     const { id } = pokemon;
     history.push(`/pokemons/${id}`);
+    expect(getByText(/Summary/i)).toBeInTheDocument();
     expect(history.location.pathname).toStrictEqual(`/pokemons/${id}`);
+    history.push('/');
+    fireEvent.click(getByText(/More details/i, {selector: 'a'}));
   });
 })
 
@@ -187,11 +200,29 @@ test ('11 - Pokemon Details need shows name, type, average weight and image', ()
     const { name, type, averageWeight: { value, measurementUnit }, image, id } = pokemon;
     history.push(`/pokemons/${id}`);
     expect(history.location.pathname).toStrictEqual(`/pokemons/${id}`);
+    expect(getByText(`${name} Details`, {selector: 'h2'})).toBeInTheDocument();
     const imageAlt = getByAltText(`${name} sprite`);
     expect(getByText(name)).toBeInTheDocument();
     expect(queryByText(type, { selector: 'p' })).toBeInTheDocument();
     expect(getByText(`Average weight: ${value} ${measurementUnit}`)).toBeInTheDocument();
     expect(imageAlt).toBeInTheDocument();
     expect(image).toStrictEqual(imageAlt.src);
+    history.push('/');
+    const moreDetails = getByText(/More details/i, {selector: 'a'});
+    fireEvent.click(moreDetails);
+  });
+})
+
+test ('12 - Pokemon Details Page can not show a link do see Pokemon Details', () => {
+  const { queryByText, history, getByText } = renderWithRouter(<App />);
+  
+  pokemons.forEach((index) => {
+    fireEvent.click(getByText('More details'));
+    const moreDetails = queryByText(/More details/i, {selector: 'a'});
+      expect(moreDetails).toBeNull();
+      history.push('/');
+      for (let i = 0; i <= index; i += 1) {
+        fireEvent.click(getByText('Próximo pokémon'));
+      }
   });
 })
