@@ -145,21 +145,24 @@ describe('16 - Favorite Pokémon should display a star icon', () => {
   });
 
   it('Must have the alt attribute equal to is marked as favorite, where is the name of the pokémon displayed', () => {
-    const {
-      getByText, getByRole, getByTestId,
-    } = render(
-      <MemoryRouter>
+    const history = createMemoryHistory();
+    const { getByText, getByTestId, getByRole } = render(
+      <Router history={history}>
         <App />
-      </MemoryRouter>,
+      </Router>,
     );
-    fireEvent.click(getByText('More details'));
+    const details = getByText('More details');
+    fireEvent.click(details);
+    const favoritesBtn = getByTestId('favorite-button');
+    expect(favoritesBtn).toBeInTheDocument();
+    fireEvent.click(favoritesBtn);
     const checkbox = getByRole('checkbox');
     fireEvent.click(checkbox);
 
-    const favImg = getByTestId('favorite-icon');
-    expect(favImg).toBeInTheDocument();
-    expect(favImg).toHaveAttribute('src', '/star-icon.svg');
-    expect(favImg).toHaveAttribute('alt', 'Pikachu is marked as favorite');
+    const favIcon = getByTestId('favorite-icon');
+    expect(favIcon).toBeInTheDocument();
+    expect(favIcon).toHaveAttribute('src', '/star-icon.svg');
+    expect(favIcon).toHaveAttribute('alt', 'Pikachu is marked as favorite');
   });
 });
 
