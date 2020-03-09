@@ -40,7 +40,6 @@ class Pokedex extends React.Component {
 
   renderPokemonButtonsPanel() {
     const pokemonTypes = this.fetchPokemonTypes();
-
     return (
       <div className="pokedex-buttons-panel">
         <Button
@@ -78,6 +77,7 @@ class Pokedex extends React.Component {
         {this.renderPokemonButtonsPanel()}
         <Button
           className="pokedex-button"
+          data-testid="next-pokemon-button"
           onClick={() => this.nextPokemon(filteredPokemons.length)}
           disabled={filteredPokemons.length <= 1}
         >

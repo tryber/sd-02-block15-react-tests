@@ -14,7 +14,7 @@ class PokemonDetails extends React.Component {
         <div className="pokemon-habitat">
           {foundAt.map(({ location, map }) => (
             <div key={location}>
-              <img src={map} alt={`${name} location`} />
+              <img data-testid={location} src={map} alt={`${name} location`} />
               <p><em>{location}</em></p>
             </div>
           ))}
@@ -51,7 +51,7 @@ class PokemonDetails extends React.Component {
 
     return (
       <form className="favorite-form">
-        <label htmlFor="favorite">
+        <label data-testid="favorite-button" htmlFor="favorite">
           Pokémon favoritado?
           <input
             type="checkbox"
@@ -77,7 +77,7 @@ class PokemonDetails extends React.Component {
     const isFavorite = isPokemonFavoriteById[id];
 
     return (
-      <section className="pokemon-details">
+      <section data-testid="pokemon-summary" className="pokemon-details">
         <h2>{`${pokemon.name} Details`}</h2>
         <Pokemon
           pokemon={pokemon}
