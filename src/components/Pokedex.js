@@ -69,7 +69,7 @@ class Pokedex extends React.Component {
     const pokemon = filteredPokemons[pokemonIndex];
 
     return (
-      <div className="pokedex">
+      <div className="pokedex" data-testid="page-pokedex">
         <h2>Encountered pokémons</h2>
         <Pokemon
           pokemon={pokemon}
