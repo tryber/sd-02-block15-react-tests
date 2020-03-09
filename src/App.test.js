@@ -1,7 +1,7 @@
 import React from 'react';
 import { Router, MemoryRouter } from 'react-router-dom';
 import { createMemoryHistory } from 'history'
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, cleanup, fireEvent, queryAllByTestId } from '@testing-library/react';
 import pokemons from './types/mockPokemons';
 import App from './App';
 import '@testing-library/jest-dom'
@@ -344,4 +344,22 @@ test ('20 - When click on Favorite Pokémons, app need redirect to URL /favorite
   expect(favoritePkmn).toBeInTheDocument();
   fireEvent.click(favoritePkmn);
   expect(history.location.pathname).toStrictEqual('/favorites');
+})
+
+test ('21 - About page need shows info about Pokedex', () => {
+  const { getByText, getAllByTestId } = renderWithRouter(<App />);
+
+  const about = getByText(/About/i, {selector: 'a'});
+  fireEvent.click(about);
+  const aboutH2 = getByText('About Pokédex');
+  expect(aboutH2).toBeInTheDocument();
+  expect(aboutH2.tagName).toStrictEqual('H2');
+  const image = getAllByTestId('imagePokedex')[0];
+  expect(image).toBeInTheDocument();
+  expect(image.src).toStrictEqual('https://cdn.bulbagarden.net/upload/thumb/8/86/Gen_I_Pok%C3%A9dex.png/800px-Gen_I_Pok%C3%A9dex.png')
+  const paragraf = getAllByTestId('paragraf');
+  paragraf.forEach((paragraph) => {
+    expect(paragraph).toBeInTheDocument();
+  });
+  expect(document.getElementsByTagName('p').length).toStrictEqual(2);
 })
