@@ -2,7 +2,6 @@ import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import { Router, MemoryRouter } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import FavoritePokemons from './FavoritePokemons';
 import App from '../App';
 
 afterEach(cleanup);
