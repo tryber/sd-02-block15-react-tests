@@ -215,14 +215,30 @@ test ('11 - Pokemon Details need shows name, type, average weight and image', ()
 
 test ('12 - Pokemon Details Page can not show a link do see Pokemon Details', () => {
   const { queryByText, history, getByText } = renderWithRouter(<App />);
-  
+
   pokemons.forEach((index) => {
     fireEvent.click(getByText('More details'));
     const moreDetails = queryByText(/More details/i, {selector: 'a'});
-      expect(moreDetails).toBeNull();
-      history.push('/');
-      for (let i = 0; i <= index; i += 1) {
-        fireEvent.click(getByText('Próximo pokémon'));
-      }
+    expect(moreDetails).toBeNull();
+    history.push('/');
+    for (let i = 0; i <= index; i += 1) {
+      fireEvent.click(getByText('Próximo pokémon'));
+    }
+  });
+})
+
+test ('13 - Details page needs show a section of pokemon resume, h2 with text Summary', () => {
+  const { container, history, getByText } = renderWithRouter(<App />);
+
+  pokemons.forEach((pokemon, index) => {
+    const { summary } = pokemon;
+    fireEvent.click(getByText('More details'));
+    const heading = container.querySelector('h2');
+    expect(heading).toBeInTheDocument();
+    expect(getByText(summary)).toBeInTheDocument();
+    history.push('/');
+    for (let i = 0; i <= index; i += 1) {
+      fireEvent.click(getByText('Próximo pokémon'));
+    }
   });
 })
