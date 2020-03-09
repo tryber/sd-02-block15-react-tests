@@ -318,3 +318,12 @@ test ('17 - The top of page need shows a fix link to navigate', () => {
   expect(about.href).toStrictEqual('http://localhost/about');
   expect(favoritePkmn.href).toStrictEqual('http://localhost/favorites');
 })
+
+test ('18 - When click on Home, app need redirect to URL /', () => {
+  const { getByText, history } = renderWithRouter(<App />);
+
+  const home = getByText(/Home/i, {selector: 'a'});
+  expect(home).toBeInTheDocument();
+  fireEvent.click(home);
+  expect(history.location.pathname).toStrictEqual('/');
+})
