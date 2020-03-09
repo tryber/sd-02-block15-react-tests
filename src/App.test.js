@@ -364,6 +364,30 @@ test ('21 - About page need shows info about Pokedex', () => {
   expect(document.getElementsByTagName('p').length).toStrictEqual(2);
 })
 
+test ('22 - Favorites page need shows favorites pokemons', () => {
+  const { getByTestId, history, getByText, getByAltText } = renderWithRouter(<App />);
+
+  pokemons.forEach((pokemon, index) => {
+    const { name, id } = pokemon;
+    fireEvent.click(getByText('More details'));
+    const checkBox = getByTestId('checkbox', {selector: 'input'});
+    expect(checkBox).toBeInTheDocument();
+    fireEvent.click(checkBox);
+    expect(checkBox).toBeChecked();
+    history.push('/favorites');
+    expect(getByText(name)).toBeInTheDocument();
+    const imageAlt = getByAltText(`${name} is marked as favorite`);
+    expect(imageAlt).toBeInTheDocument();
+    history.push(`/pokemons/${id}`);
+    fireEvent.click(checkBox);
+    expect(checkBox).not.toBeChecked();
+    history.push('/');
+    for (let i = 0; i <= index; i += 1) {
+      fireEvent.click(getByText('Próximo pokémon'));
+    }
+  });
+})
+
 test ('23 - Unknown URL shows a Page requested not found in h2', () => {
   const { history, getByText, getByTestId } = renderWithRouter(<App />);
 
