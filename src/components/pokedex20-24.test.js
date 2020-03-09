@@ -15,7 +15,6 @@ describe('21 -"About" page should display information about Pokédex', () => {
       </Router>,
     );
     fireEvent.click(getByText('About'));
-
     const headingH2 = getByText('About Pokédex');
     expect(headingH2).toBeInTheDocument();
     expect(headingH2.tagName).toBe('H2');
