@@ -363,3 +363,15 @@ test ('21 - About page need shows info about Pokedex', () => {
   });
   expect(document.getElementsByTagName('p').length).toStrictEqual(2);
 })
+
+test ('23 - Unknown URL shows a Page requested not found in h2', () => {
+  const { history, getByText, getByTestId } = renderWithRouter(<App />);
+
+  history.push('/teste');
+  const notFoundH2 = getByText(/Page requested not found/i, {selector: 'h2'});
+  expect(notFoundH2).toBeInTheDocument();
+  expect(notFoundH2.tagName).toStrictEqual('H2');
+  const notFoundImg = getByTestId('notFoundImage');
+  expect(notFoundImg).toBeInTheDocument();
+  expect(notFoundImg.src).toStrictEqual('https://media.giphy.com/media/kNSeTs31XBZ3G/giphy.gif');
+})
