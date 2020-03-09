@@ -160,7 +160,7 @@ test('9 - Pokedex needs show a link do Pokemon Details with a unique ID', () => 
   });
 })
 
-test('10 - Navigation link of pokemon More details needs show URL /pokemon/id', async () => {
+test('10 - Navigation link of pokemon More details needs show URL /pokemon/id', () => {
   const history = createMemoryHistory();
   const { getByText } = render(
     <Router history={ history }>
@@ -168,18 +168,30 @@ test('10 - Navigation link of pokemon More details needs show URL /pokemon/id', 
     </Router>,
   );
 
-  const moreDetails = getByText(/More details/i, {selector: 'a'});
-  const home = getByText(/Home/i, {selector: 'a'});
-  const buttonNxtPkm = getByText(/Próximo pokémon/i, {selector: 'button'});
-  expect(getByText('Encountered pokémons')).toBeInTheDocument();
-  expect(moreDetails).toBeInTheDocument();
-  await pokemons.forEach((pokemon) => {
-          const { id, name } = pokemon;
-          for (let i = 0; i < pokemons.length; i += 1) {
-            if (pokemons[i].name !== name) return fireEvent.click(buttonNxtPkm);
-          }
-    fireEvent.click(moreDetails);
+  pokemons.forEach((pokemon) => {
+    const { id } = pokemon;
+    history.push(`/pokemons/${id}`);
     expect(history.location.pathname).toStrictEqual(`/pokemons/${id}`);
-    fireEvent.click(home);
+  });
+})
+
+test ('11 - Pokemon Details need shows name, type, average weight and image', () => {
+  const history = createMemoryHistory();
+  const { getByText, getByAltText, queryByText } = render(
+    <Router history={ history }>
+      <App />
+    </Router>,
+  );
+
+  pokemons.forEach((pokemon) => {
+    const { name, type, averageWeight: { value, measurementUnit }, image, id } = pokemon;
+    history.push(`/pokemons/${id}`);
+    expect(history.location.pathname).toStrictEqual(`/pokemons/${id}`);
+    const imageAlt = getByAltText(`${name} sprite`);
+    expect(getByText(name)).toBeInTheDocument();
+    expect(queryByText(type, { selector: 'p' })).toBeInTheDocument();
+    expect(getByText(`Average weight: ${value} ${measurementUnit}`)).toBeInTheDocument();
+    expect(imageAlt).toBeInTheDocument();
+    expect(image).toStrictEqual(imageAlt.src);
   });
 })
