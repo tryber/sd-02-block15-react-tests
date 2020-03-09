@@ -242,3 +242,25 @@ test ('13 - Details page needs show a section of pokemon resume, h2 with text Su
     }
   });
 })
+
+test ('14 - Details page needs show a section with maps and localization of pokemons', () => {
+  const { queryAllByAltText, history, getByText } = renderWithRouter(<App />);
+
+  pokemons.forEach((pokemon, index) => {
+    const { name, foundAt } = pokemon;
+    fireEvent.click(getByText('More details'));
+    expect(getByText(`Game Locations of ${name}`, {selector: 'h2'})).toBeInTheDocument();
+    foundAt.forEach((data, index) => {
+      const { location, map } = data;
+      expect(getByText(location)).toBeInTheDocument();
+      const imageAlt = queryAllByAltText(`${name} location`)[index];
+      expect(imageAlt).toBeInTheDocument();
+      expect(map).toStrictEqual(imageAlt.src);
+      expect(getByText(location)).toBeInTheDocument();
+    })
+    history.push('/');
+    for (let i = 0; i <= index; i += 1) {
+      fireEvent.click(getByText('Próximo pokémon'));
+    }
+  });
+})
