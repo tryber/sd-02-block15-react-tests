@@ -7,11 +7,23 @@ import pokemons from './mockData';
 
 afterEach(cleanup);
 
+const isPokemonFavoriteById = {
+  25: true,
+  4: true,
+  10: true,
+  23: false,
+  65: true,
+  151: true,
+  78: false,
+  143: true,
+  148: false,
+};
+
 const pokemonsName = pokemons.map(({ name }) => name);
 const pokemonsType = pokemons.map(({ type }) => type);
 
-describe('Test 1 - shows pokedex in main page', () => {
-  test('1.1 renders a heading with the text `Pokédex`', () => {
+describe('test 1 - shows pokedex in main page', () => {
+  it('1.1 - renders a heading with the text `Pokédex`', () => {
     const { getByText } = render(
       <MemoryRouter>
         <App />
@@ -21,7 +33,7 @@ describe('Test 1 - shows pokedex in main page', () => {
     expect(heading).toBeInTheDocument();
   });
 
-  test('1.2 shows the Pokedéx when the route is `/`', () => {
+  it('1.2 - shows the Pokedéx when the route is `/`', () => {
     const { getByText } = render(
       <MemoryRouter
         initialEntries={['/']}
@@ -36,14 +48,47 @@ describe('Test 1 - shows pokedex in main page', () => {
   });
 });
 
-describe('Test 2 - only one pokemon each page', () => {
-  test('shows only one pokemon at once', () => {
+describe('test 2 - only one pokemon each page', () => {
+  it('2.0 - shows only one pokemon at once', () => {
     const { getAllByText } = render(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>,
     );
-    expect(getAllByText(/more details/i).length.toBe(1));
-    expect(getAllByText(/more details/i)[1].toBeUndefined());
+    expect(getAllByText(/more details/i).length).toBe(1);
+    expect(getAllByText(/more details/i)[1]).toBeUndefined();
+  });
+});
+
+describe('test 3 - next button shows next pokemon', () => {
+  it("3.1 - button must contain 'proximo pokemon'", () => {
+    const { getByText } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    );
+    expect(getByText(/próximo pokémon/i)).toBeInTheDocument();
+  });
+  it('3.2 - multiple clicks must show next pokemon', () => {
+    const { getByText } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
+      </MemoryRouter>,
+    );
+    const nextButton = getByText(/próximo pokémon/i);
+    pokemonsName.forEach((pokemon) => {
+      expect(getByText(pokemon)).toBeInTheDocument();
+      fireEvent.click(nextButton);
+    });
+  });
+  it('3.3 - after last pokémon must return to the first one', () => {
+    const { getByText } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
+      </MemoryRouter>,
+    );
+    const nextButton = getByText(/próximo pokémon/i);
+    pokemonsName.forEach(() => fireEvent.click(nextButton));
+    expect(getByText(pokemonsName[0])).toBeInTheDocument();
   });
 });
