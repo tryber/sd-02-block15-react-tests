@@ -1,14 +1,17 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { render } from '@testing-library/react';
+import { MemoryRouter, Router } from 'react-router-dom';
+import { render, cleanup, fireEvent } from '@testing-library/react';
 import App from './App';
+import Pokedex from './components/Pokedex';
+import FavoritePokemons from './components/FavoritePokemons';
+import mockData from './mockData';
 
-test('renders a reading with the text `Pokédex`', () => {
+test('renders a Heading with the text `Pokédex`', () => {
   const { getByText } = render(
     <MemoryRouter>
       <App />
     </MemoryRouter>,
-  );
+  )
   const heading = getByText(/Pokédex/i);
   expect(heading).toBeInTheDocument();
 });
