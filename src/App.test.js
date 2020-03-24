@@ -21,9 +21,9 @@ const isPokemonFavoriteById = {
   148: false,
 };
 
-const pokemonsName = pokemons.map(({ name }) => name);
+const pokemonNames = pokemons.map(({ name }) => name);
 const filterTypes = pokemons.map(({ type }) => type);
-const pokemonsType = filterTypes.filter((item, index, array) => array.indexOf(item) === index);
+const pokemonTypes = filterTypes.filter((item, index, array) => array.indexOf(item) === index);
 
 describe('test 1 - shows pokedex in main page', () => {
   it('1.1 - renders a heading with the text `Pokédex`', () => {
@@ -79,7 +79,7 @@ describe('test 3 - next button shows next pokemon', () => {
       </MemoryRouter>,
     );
     const nextButton = getByText(/próximo pokémon/i);
-    pokemonsName.forEach((pokemon) => {
+    pokemonNames.forEach((pokemon) => {
       expect(getByText(pokemon)).toBeInTheDocument();
       fireEvent.click(nextButton);
     });
@@ -91,8 +91,8 @@ describe('test 3 - next button shows next pokemon', () => {
       </MemoryRouter>,
     );
     const nextButton = getByText(/próximo pokémon/i);
-    pokemonsName.forEach(() => fireEvent.click(nextButton));
-    expect(getByText(pokemonsName[0])).toBeInTheDocument();
+    pokemonNames.forEach(() => fireEvent.click(nextButton));
+    expect(getByText(pokemonNames[0])).toBeInTheDocument();
   });
 });
 describe('Test 4 - pokédex must contain filter buttons', () => {
@@ -103,7 +103,7 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
       </MemoryRouter>,
     );
     const nextButton = getByText(/Próximo pokémon/i);
-    pokemonsType.forEach((type) => {
+    pokemonTypes.forEach((type) => {
       const typeButton = getAllByText(type)[1] || getByText(type);
       fireEvent.click(typeButton);
       const clickedPokemon = pokemons.filter((e) => e.type === type);
@@ -119,7 +119,7 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
         <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
       </MemoryRouter>,
     );
-    pokemonsType.forEach((type) => {
+    pokemonTypes.forEach((type) => {
       const typeButton = getAllByText(type)[1] || getByText(type);
       expect(typeButton).toBeInTheDocument();
       expect(typeButton).toHaveTextContent(type);
@@ -147,24 +147,38 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
       const allButton = getByText(/all/i);
       const nextButton = getByText(/próximo pokémon/i);
       fireEvent.click(allButton);
-      pokemonsName.forEach((pokemonName) => {
+      pokemonNames.forEach((pokemonName) => {
         expect(getByText(pokemonName)).toBeInTheDocument();
         fireEvent.click(nextButton);
       });
-      expect(getByText(pokemonsName[0])).toBeInTheDocument();
+      expect(getByText(pokemonNames[0])).toBeInTheDocument();
     });
     it('5.3 - first page must load filter all', () => {
       const { getByText } = render(
         <MemoryRouter initialEntries={['/']}>
           <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
         </MemoryRouter>,
-      );      
-      const nextButton = getByText(/próximo pokémon/i);      
-      pokemonsName.forEach((pokemonName) => {
+      );
+      const nextButton = getByText(/próximo pokémon/i);
+      pokemonNames.forEach((pokemonName) => {
         expect(getByText(pokemonName)).toBeInTheDocument();
         fireEvent.click(nextButton);
       });
-      expect(getByText(pokemonsName[0])).toBeInTheDocument();
+      expect(getByText(pokemonNames[0])).toBeInTheDocument();
     });
+  });
+  describe('test 6 - pokedex must render a button filter to each type of pokemon', () => {
+    it('6.1 - checking if all types were rendered', () => {
+      const { getByText, getAllByText } = render(
+        <MemoryRouter inicialEntries={['/']}>
+          <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
+        </MemoryRouter>
+      );
+      pokemonTypes.forEach((type) => {
+        const typeButton = getAllByText(type)[1] || getByText(type);
+        expect(typeButton).toBeInTheDocument();
+      });
+      expect(getByText(/all/i)).toBeInTheDocument();
     });
+  });
 });
