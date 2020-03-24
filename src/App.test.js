@@ -199,4 +199,34 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
       });
     });
   });
+  describe('Test 8 - pokedex must display name, type, weight and image', () => {
+    it("8.1 - Average weight must has the form 'Average weight: <value> <measurementUnit>'", () => {
+      const { getByText, getAllByText } = render(
+        <MemoryRouter initialEntries={['/']}>
+          <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
+        </MemoryRouter>,
+      );
+      const nextButton = getByText(/próximo pokémon/i);
+      pokemons.forEach(({ name, type, averageWeight: { value, measurementUnit } }) => {
+        expect(getByText(name)).toBeInTheDocument();
+        expect(getAllByText(type)[0]).toBeInTheDocument();
+        expect(getByText(`Average weight: ${value} ${measurementUnit}`)).toBeInTheDocument();
+        fireEvent.click(nextButton);
+      });
+    });
+    it('8.2 - Image must have src with URL and alt with pokemon name', () => {
+      const { getByAltText, getByText } = render(
+        <MemoryRouter initialEntries={['/']}>
+          <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
+        </MemoryRouter>,
+      );
+      const nextButton = getByText(/próximo pokémon/i);
+      pokemons.forEach(({ name, image }) => {
+        const pokemonImage = getByAltText(`${name} sprite`);
+        expect(pokemonImage).toBeTruthy();
+        expect(pokemonImage.src).toBe(image);
+        fireEvent.click(nextButton);
+      });
+    });
+  });
 });
