@@ -95,7 +95,7 @@ describe('test 3 - next button shows next pokemon', () => {
 describe('Test 4 - pokédex must contain filter buttons', () => {
   it('4.1 - button type must select only pokemons of that type', () => {
     const { getByText, getAllByText } = render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/']}>
         <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
       </MemoryRouter>,
     );
@@ -104,13 +104,25 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
     filteredTypes.forEach((type) => {
       const typeButton = getAllByText(type)[1] || getByText(type);
       fireEvent.click(typeButton);
-      // parei aqui
-      const nomesPokemonsTipos = pokemons.filter((e) => e.type === type);
-      console.log(nomesPokemonsTipos);
-      nomesPokemonsTipos.forEach((pokemonType, index) => {
-        expect(getByText(nomesPokemonsTipos[index].name)).toBeInTheDocument();
-        if (nomesPokemonsTipos.length > 1) fireEvent.click(nextButton);
+      const clickedPokemon = pokemons.filter((e) => e.type === type);
+      clickedPokemon.forEach((pokemonType) => {
+        expect(getByText(pokemonType.name)).toBeInTheDocument();
+        if (clickedPokemon.length > 1) fireEvent.click(nextButton);
       });
+    });
+  });
+  it("4.2 - button label must be igual 'type'", () => {
+    const { getAllByText, getByText } = render(
+      <MemoryRouter inicialEntries={['/']}>
+        <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
+      </MemoryRouter>,
+    );
+    const filteredTypes = pokemonsType.filter((item, index, array) => array.indexOf(item) === index);
+    filteredTypes.forEach((type) => {
+      const typeButton = getAllByText(type)[1] || getByText(type);
+      expect(typeButton).toBeInTheDocument();
+      expect(typeButton).toHaveTextContent(type);
+      expect(typeButton).toHaveAttribute('type', 'button');
     });
   });
 });
