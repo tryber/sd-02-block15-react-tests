@@ -6,6 +6,7 @@ import {
 import App from './App';
 import { Pokedex, FavoritePokemons } from './components';
 import pokemons from './mockData';
+import { pokemonType } from './types';
 
 afterEach(cleanup);
 
@@ -22,8 +23,8 @@ const isPokemonFavoriteById = {
 };
 
 const pokemonNames = pokemons.map(({ name }) => name);
-const filterTypes = pokemons.map(({ type }) => type);
-const pokemonTypes = filterTypes.filter((item, index, array) => array.indexOf(item) === index);
+const allTypes = pokemons.map(({ type }) => type);
+const pokemonTypes = allTypes.filter((item, index, array) => array.indexOf(item) === index);
 
 describe('test 1 - shows pokedex in main page', () => {
   it('1.1 - renders a heading with the text `Pokédex`', () => {
@@ -172,13 +173,30 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
       const { getByText, getAllByText } = render(
         <MemoryRouter inicialEntries={['/']}>
           <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
-        </MemoryRouter>
+        </MemoryRouter>,
       );
       pokemonTypes.forEach((type) => {
         const typeButton = getAllByText(type)[1] || getByText(type);
         expect(typeButton).toBeInTheDocument();
       });
       expect(getByText(/all/i)).toBeInTheDocument();
+    });
+  });
+  describe('test 7 - next button must be disabled if theres only one pokemon', () => {
+    test('7.1 - disable next button', () => {
+      const { getByText, getAllByText } = render(
+        <MemoryRouter inicialEntries={['/']}>
+          <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
+        </MemoryRouter>,
+      );
+      const nextButton = getByText(/próximo pokémon/i);
+      const repeatedPokemons = allTypes.filter((item, index, array) => array.indexOf(item) !== index);
+      const uniquePokemons = pokemonTypes.filter((pokemon) => !(repeatedPokemons).includes(pokemon));
+      uniquePokemons.forEach((uniquePokemon) => {
+        const uniqueButton = getAllByText(uniquePokemon)[1] || getByText(uniquePokemon);
+        fireEvent.click(uniqueButton);
+        expect(nextButton).toBeDisabled();
+      });
     });
   });
 });
