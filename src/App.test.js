@@ -1,6 +1,8 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import {
+  render, cleanup, fireEvent, getAllByAltText,
+} from '@testing-library/react';
 import App from './App';
 import { Pokedex, FavoritePokemons } from './components';
 import pokemons from './mockData';
@@ -20,7 +22,8 @@ const isPokemonFavoriteById = {
 };
 
 const pokemonsName = pokemons.map(({ name }) => name);
-const pokemonsType = pokemons.map(({ type }) => type);
+const filterTypes = pokemons.map(({ type }) => type);
+const pokemonsType = filterTypes.filter((item, index, array) => array.indexOf(item) === index);
 
 describe('test 1 - shows pokedex in main page', () => {
   it('1.1 - renders a heading with the text `Pokédex`', () => {
@@ -99,9 +102,8 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
         <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
       </MemoryRouter>,
     );
-    const filteredTypes = pokemonsType.filter((item, index, array) => array.indexOf(item) === index);
     const nextButton = getByText(/Próximo pokémon/i);
-    filteredTypes.forEach((type) => {
+    pokemonsType.forEach((type) => {
       const typeButton = getAllByText(type)[1] || getByText(type);
       fireEvent.click(typeButton);
       const clickedPokemon = pokemons.filter((e) => e.type === type);
@@ -117,12 +119,52 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
         <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
       </MemoryRouter>,
     );
-    const filteredTypes = pokemonsType.filter((item, index, array) => array.indexOf(item) === index);
-    filteredTypes.forEach((type) => {
+    pokemonsType.forEach((type) => {
       const typeButton = getAllByText(type)[1] || getByText(type);
       expect(typeButton).toBeInTheDocument();
       expect(typeButton).toHaveTextContent(type);
       expect(typeButton).toHaveAttribute('type', 'button');
     });
   });
+  describe('Test 5 - pokedex must contain button to reset filter', () => {
+    it("5.1 - button label must be 'all'", () => {
+      const { getByText } = render(
+        <MemoryRouter inicialEntries={['/']}>
+          <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
+        </MemoryRouter>,
+      );
+      const allButton = getByText(/all/i);
+      expect(allButton).toBeInTheDocument();
+      expect(allButton).toHaveTextContent(/all/i);
+      expect(allButton).toHaveAttribute('type', 'button');
+    });
+    it('5.2 - click must select all pokemons', () => {
+      const { getByText } = render(
+        <MemoryRouter initialEntries={['/']}>
+          <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
+        </MemoryRouter>,
+      );
+      const allButton = getByText(/all/i);
+      const nextButton = getByText(/próximo pokémon/i);
+      fireEvent.click(allButton);
+      pokemonsName.forEach((pokemonName) => {
+        expect(getByText(pokemonName)).toBeInTheDocument();
+        fireEvent.click(nextButton);
+      });
+      expect(getByText(pokemonsName[0])).toBeInTheDocument();
+    });
+    it('5.3 - first page must load filter all', () => {
+      const { getByText } = render(
+        <MemoryRouter initialEntries={['/']}>
+          <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
+        </MemoryRouter>,
+      );      
+      const nextButton = getByText(/próximo pokémon/i);      
+      pokemonsName.forEach((pokemonName) => {
+        expect(getByText(pokemonName)).toBeInTheDocument();
+        fireEvent.click(nextButton);
+      });
+      expect(getByText(pokemonsName[0])).toBeInTheDocument();
+    });
+    });
 });
