@@ -1,7 +1,7 @@
 import React from 'react';
 import { MemoryRouter, Router } from 'react-router-dom';
 import {
-  render, cleanup, fireEvent, getAllByAltText,
+  render, cleanup, fireEvent, getAllByAltText, getByAltText,
 } from '@testing-library/react';
 import App from './App';
 import { Pokedex, FavoritePokemons } from './components';
@@ -226,6 +226,22 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
         expect(pokemonImage).toBeTruthy();
         expect(pokemonImage.src).toBe(image);
         fireEvent.click(nextButton);
+      });
+    });
+    describe('Test 9 - pokémon must contain link to show details', () => {
+      it("9.1 - link must be direct to '/pokemon/<id>'", () => {
+        const { getByText } = render(
+          <MemoryRouter initialEntries={['/']}>
+            <Pokedex pokemons={pokemons} isPokemonFavoriteById={isPokemonFavoriteById} />
+          </MemoryRouter>,
+        );
+        const nextButton = getByText(/próximo pokémon/i);
+        pokemons.forEach(({ id }) => {
+          const detailsButton = getByText(/more details/i);
+          expect(detailsButton).toBeInTheDocument();
+          expect(detailsButton.href).toBe(`http://localhost/pokemons/${id}`);
+          fireEvent.click(nextButton);
+        });
       });
     });
   });
