@@ -332,5 +332,30 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
         expect(favorites.href).toBe('http://localhost/favorites');
       });
     });
+    describe('Test 18, 19, 20 - click should redirect', () => {
+      it('18 - home directs to /', () => {
+        const { getByText, history } = renderWithRouter(<App />);
+        const homeButton = getByText('Home');
+        fireEvent.click(homeButton);
+        expect(history.location.pathname).toBe('/');
+        fireEvent.click(getByText(/more details/i))
+        fireEvent.click(homeButton);
+        expect(history.location.pathname).toBe('/');
+      });
+      it('19 - about directs to /about', () => {
+        const { getByText, history } = renderWithRouter(<App />);
+        const aboutButton = getByText('About');
+        fireEvent.click(aboutButton);
+        expect(history.location.pathname).toBe('/about');
+      });
+      it('20 - favorites directs to /favorites', () => {
+        const { getByText, history } = renderWithRouter(<App />);
+        const favButton = getByText('Favorite Pokémons');
+        fireEvent.click(favButton);
+        expect(history.location.pathname).toBe('/favorites');
+      });
+    });
+    descru
+
   });
 });
