@@ -221,7 +221,7 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
         }
       });
     });
-    describe('Test 13 - detailed pokemon should display pokemon summary', () => {
+    describe('Test 13 - pokemon details should display pokemon summary', () => {
       it('13.1 - pokemon details must contain heading h2 and 13.2 - text summary', () => {
         const { getByText, queryByText } = renderWithRouter(<App />);
         pokemons.forEach(({
@@ -241,6 +241,33 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
         });
       });
     });
+    describe('Test 14 - pokemon details must display maps', () => {
+      it('14.1 to 14.5 - must contain h2 with text <Game Locations of <pokemon>', () => {
+        const { getByText, getAllByAltText, queryByText, getByAltText } = renderWithRouter(<App />);
+        pokemons.forEach(({
+          name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
+        }, index) => {
+          for (let i = 0; i < index; i += 1) {
+            const nextButton = getByText(/Próximo pokémon/i);
+            fireEvent.click(nextButton);
+          }
+          const detailsButton = queryByText(/More details/i);
+          fireEvent.click(detailsButton);
+          // 14.1
+          expect(getByText(`Game Locations of ${name}`)).toBeInTheDocument();
+          expect(getByText(`Game Locations of ${name}`).tagName).toBe('H2');
+          // 14.2
+          expect(getAllByAltText(`${name} location`).length).toBe(foundAt.length);
+          // 14.3, 14.4 e 14.5
+          for (let i = 0; i < foundAt.length; i += 1) {
+            const location = getAllByAltText(`${name} location`)[i];
+            expect(getByText(foundAt[i].location)).toBeInTheDocument(); // 14.3
+            expect(location.src).toBe(foundAt[i].map); // 14.4
+            expect(location.alt).toBe(`${name} location`); // 14.5
+          }
+          fireEvent.click(getByText('Home'));
+        });
+      });
     });
   });
-
+});
