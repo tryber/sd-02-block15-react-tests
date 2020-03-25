@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, cleanup, fireEvent, getByAltText } from '@testing-library/react';
 import renderWithRouter from './RenderWithRouter';
 import App from './App';
 import { Pokedex, FavoritePokemons } from './components';
@@ -243,7 +243,7 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
     });
     describe('Test 14 - pokemon details must display maps', () => {
       it('14.1 to 14.5 - must contain h2 with text <Game Locations of <pokemon>', () => {
-        const { getByText, getAllByAltText, queryByText, getByAltText } = renderWithRouter(<App />);
+        const { getByText, getAllByAltText, queryByText } = renderWithRouter(<App />);
         pokemons.forEach(({
           name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
         }, index) => {
@@ -267,6 +267,69 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
           }
           fireEvent.click(getByText('Home'));
         });
+      });
+    });
+    describe('Test 15 - pokemon details must display fav button', () => {
+      it('15.1 - must contain checkbox and enable/disable working', () => {
+        const {
+          getByText, queryByText, getByRole, getByLabelText,
+        } = renderWithRouter(<App />);
+        pokemons.forEach(({
+          name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
+        }, index) => {
+          for (let i = 0; i < index; i += 1) {
+            const nextButton = getByText(/Próximo pokémon/i);
+            fireEvent.click(nextButton);
+          }
+          const detailsButton = queryByText(/More details/i);
+          fireEvent.click(detailsButton);
+          const favButton = getByRole('checkbox');
+          expect(favButton).toBeInTheDocument();
+          expect(favButton.checked).toBeFalsy();
+          fireEvent.click(favButton);
+          expect(favButton.checked).toBeTruthy();
+          fireEvent.click(favButton);
+          expect(favButton.checked).toBeFalsy();
+          expect((favButton.parentNode).tagName).toBe('LABEL');
+          expect((favButton.parentNode).innerHTML).toMatch(/Pokémon favoritado/i);
+          fireEvent.click(getByText('Home'));
+        });
+      });
+    });
+    describe('Test 16 - favorited pokemons must display star icon', () => {
+      it('16.1 - icon must be image with src=/star-icon.svg', () => {
+        const { getByText, getByAltText, queryByText, getByRole } = renderWithRouter(<App />);
+        pokemons.forEach(({
+          name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
+        }, index) => {
+          for (let i = 0; i < index; i += 1) {
+            const nextButton = getByText(/Próximo pokémon/i);
+            fireEvent.click(nextButton);
+          }
+          const detailsButton = queryByText(/More details/i);
+          fireEvent.click(detailsButton);
+          fireEvent.click(getByRole('checkbox'));
+          const favStar = getByAltText(`${name} is marked as favorite`);
+          expect(favStar).toHaveAttribute('src', '/star-icon.svg');
+          fireEvent.click(getByRole('checkbox'));
+          expect(favStar).not.toBeInTheDocument();
+          fireEvent.click(getByText('Home'));
+        });
+      });
+    });
+    describe('Test 17 - nav bar always display some links', () => {
+      it('17.1 - <home> URL </> <about> URL </about> favorite pokémons </favorites> ', () => {
+        const { getByText } = renderWithRouter(<App />)
+        const home = getByText('Home');
+        const about = getByText('About');
+        const favorites = getByText('Favorite Pokémons');
+        expect(home.href).toBe('http://localhost/');
+        expect(about.href).toBe('http://localhost/about');
+        expect(favorites.href).toBe('http://localhost/favorites');
+        fireEvent.click(getByText(/more details/i));
+        expect(home.href).toBe('http://localhost/');
+        expect(about.href).toBe('http://localhost/about');
+        expect(favorites.href).toBe('http://localhost/favorites');
       });
     });
   });
