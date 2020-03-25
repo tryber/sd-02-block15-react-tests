@@ -1,12 +1,10 @@
 import React from 'react';
-import { MemoryRouter, Router } from 'react-router-dom';
-import {
-  render, cleanup, fireEvent, getAllByAltText, getByAltText,
-} from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { render, cleanup, fireEvent } from '@testing-library/react';
+import renderWithRouter from '../Renderwithrouter';
 import App from './App';
 import { Pokedex, FavoritePokemons } from './components';
 import pokemons from './mockData';
-import { pokemonType } from './types';
 
 afterEach(cleanup);
 
@@ -22,17 +20,13 @@ const isPokemonFavoriteById = {
   148: false,
 };
 
-const pokemonNames = pokemons.map(({ name }) => name);
 const allTypes = pokemons.map(({ type }) => type);
 const pokemonTypes = allTypes.filter((item, index, array) => array.indexOf(item) === index);
+const pokemonNames = pokemons.map(({ name }) => name);
 
 describe('test 1 - shows pokedex in main page', () => {
   it('1.1 - renders a heading with the text `Pokédex`', () => {
-    const { getByText } = render(
-      <MemoryRouter>
-        <App />
-      </MemoryRouter>,
-    );
+    const { getByText } = renderWithRouter(<App />);
     const heading = getByText(/Pokédex/i);
     expect(heading).toBeInTheDocument();
   });
@@ -239,9 +233,19 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
         pokemons.forEach(({ id }) => {
           const detailsButton = getByText(/more details/i);
           expect(detailsButton).toBeInTheDocument();
-          expect(detailsButton.href).toBe(`http://localhost/pokemons/${id}`);
+          expect(detailsButton.href).toMatch(`http://localhost/pokemons/${id}`);
           fireEvent.click(nextButton);
         });
+      });
+    });
+    describe('Test 10 - click more details should redirect page', () => {
+      it('10.1 - should redirect and change to URL /pokemon/id ', () => {
+        const history = createMemoryHistory();
+        const { getByText } = render(
+          <Router history={history}>
+            <App />
+          </Router>,
+        );
       });
     });
   });
