@@ -221,5 +221,26 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
         }
       });
     });
+    describe('Test 13 - detailed pokemon should display pokemon summary', () => {
+      it('13.1 - pokemon details must contain heading h2 and 13.2 - text summary', () => {
+        const { getByText, queryByText } = renderWithRouter(<App />);
+        pokemons.forEach(({
+          name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
+        }, index) => {
+          for (let i = 0; i < index; i += 1) {
+            const nextButton = getByText(/Próximo pokémon/i);
+            fireEvent.click(nextButton);
+          }
+          const detailsButton = queryByText(/More details/i);
+          fireEvent.click(detailsButton);
+          expect(getByText('Summary')).toBeInTheDocument();
+          expect(getByText('Summary').tagName).toBe('H2');
+          expect(getByText(summary)).toBeInTheDocument();
+          expect(getByText(summary).tagName).toBe('P');
+          fireEvent.click(getByText('Home'));
+        });
+      });
+    });
+    });
   });
-});
+
