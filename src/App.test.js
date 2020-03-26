@@ -1,6 +1,8 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { render, cleanup, fireEvent, getByAltText } from '@testing-library/react';
+import {
+  render, cleanup, fireEvent, getByAltText,
+} from '@testing-library/react';
 import renderWithRouter from './RenderWithRouter';
 import App from './App';
 import { Pokedex, FavoritePokemons } from './components';
@@ -47,7 +49,7 @@ describe('test 2 - only one pokemon each page', () => {
   });
 });
 
-describe('test 3 - next button shows next pokemon', () => {
+describe('Test 3 - next button shows next pokemon', () => {
   it("3.1 - button must contain 'proximo pokemon'", () => {
     const { getByText } = renderWithRouter(<App />);
     expect(getByText(/próximo pokémon/i)).toBeInTheDocument();
@@ -298,7 +300,9 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
     });
     describe('Test 16 - favorited pokemons must display star icon', () => {
       it('16.1 - icon must be image with src=/star-icon.svg', () => {
-        const { getByText, getByAltText, queryByText, getByRole } = renderWithRouter(<App />);
+        const {
+          getByText, getByAltText, queryByText, getByRole,
+        } = renderWithRouter(<App />);
         pokemons.forEach(({
           name, type, averageWeight: { value, measurementUnit }, image, summary, foundAt,
         }, index) => {
@@ -319,7 +323,7 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
     });
     describe('Test 17 - nav bar always display some links', () => {
       it('17.1 - <home> URL </> <about> URL </about> favorite pokémons </favorites> ', () => {
-        const { getByText } = renderWithRouter(<App />)
+        const { getByText } = renderWithRouter(<App />);
         const home = getByText('Home');
         const about = getByText('About');
         const favorites = getByText('Favorite Pokémons');
@@ -338,7 +342,7 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
         const homeButton = getByText('Home');
         fireEvent.click(homeButton);
         expect(history.location.pathname).toBe('/');
-        fireEvent.click(getByText(/more details/i))
+        fireEvent.click(getByText(/more details/i));
         fireEvent.click(homeButton);
         expect(history.location.pathname).toBe('/');
       });
@@ -378,8 +382,56 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
       });
       it('21.3 - should have right image path', () => {
         const { getByAltText } = renderWithRouter(<App />, { route: '/about' });
-        expect(getByAltText(/Pokédex/i).src).toBe('https://cdn.bulbagarden.net/upload/thumb/8/86/Gen_I_Pok%C3%A9dex.png/800px-Gen_I_Pok%C3%A9dex.png')
+        expect(getByAltText(/Pokédex/i).src).toBe('https://cdn.bulbagarden.net/upload/thumb/8/86/Gen_I_Pok%C3%A9dex.png/800px-Gen_I_Pok%C3%A9dex.png');
       });
     });
+
+    const booleanPokemons = {
+      25: true,
+      4: true,
+      10: true,
+      23: false,
+      65: true,
+      151: true,
+      78: false,
+      143: true,
+      148: false,
+    };
+
+    const favoritedPokemons = pokemons.filter(({ id }) => booleanPokemons[id]);
+    const notFavoritedPokemons = pokemons.filter(({ id }) => !booleanPokemons[id]);
+
+    describe('Test 22 - favorite page should display favorite pokemons', () => {
+      it('22.1 - should display all favorited pokemons', () => {
+        const { getByText } = renderWithRouter(<FavoritePokemons pokemons={favoritedPokemons} />);
+        favoritedPokemons.forEach(({ name }) => {
+          expect(getByText(name)).toBeInTheDocument();
+        });
+      });
+      it('22.2 - should not display favorited pokemons', () => {
+        const { queryByText } = renderWithRouter(<FavoritePokemons pokemons={favoritedPokemons} />);
+        notFavoritedPokemons.forEach(({ name }) => {
+          expect(queryByText(name)).not.toBeInTheDocument();
+        });
+      });
+    });
+    describe('Test 23 - unknown path display error 404', () => {
+      it('23.1 - notFound page must have <Page requested not found> in <h2>', () => {
+        const { queryByText } = renderWithRouter(<App />, { route: '/inexistent' });
+        expect(queryByText(/page requested not found/i)).toBeInTheDocument();
+        expect(queryByText(/page requested not found/i).tagName).toBe('H2');
+      });
+      it('23.2 - must display image', () => {
+        const { getByAltText } = renderWithRouter(<App />, { route: '/messedup' });
+        const img = getByAltText(/Pikachu crying because the page requested was not found/i);
+        expect(img).toHaveAttribute('src', 'https://media.giphy.com/media/kNSeTs31XBZ3G/giphy.gif');
+      });
+    });
+    describe('Test 24 - 100% coverage', () => {
+      it('must run command <npm run test-coverage', () => {
+        console.log('npm run test-coverage in command line');
+      });
+    });
+    // describe('Test 25 -  ')
   });
 });
