@@ -53,6 +53,7 @@ class Locations extends React.Component {
             </div>
           </div>
           <div>
+            <h1>Locations:</h1>
             {results.map(({ name }) => (
               <h2>
                 {name}
