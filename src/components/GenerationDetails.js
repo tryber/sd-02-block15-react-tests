@@ -1,28 +1,46 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class GenerationInfo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       results: [],
+      generation: '',
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { location: { state: { url } } } = this.props;
-    fetch(url)
-      .then((resolve) => resolve.json())
-      .then(({ pokemon_species: pokemonSpecies }) => this.setState({ results: pokemonSpecies }));
+    const response = await fetch(url);
+    const json = await response.json();
+    const { pokemon_species: pokemonSpecies, name } = json;
+    this.setState({ generation: name, results: pokemonSpecies });
   }
 
   render() {
-    const { results } = this.state;
+    const { results, generation } = this.state;
     return (
       <div>
-        {results.map(({ name }) => <div key={name}><h3>{name}</h3></div>)}
+        <h1>
+          {`Pokémons of ${generation}`}
+        </h1>
+        <div>
+          <div>
+            {results.map(({ name }) => <div key={name}><h3>{name}</h3></div>)}
+          </div>
+        </div>
       </div>
     );
   }
 }
-export default GenerationInfo;
 
+GenerationInfo.propTypes = PropTypes.shape({
+  location: PropTypes.shape({
+    state: PropTypes.shape({
+      url: PropTypes.array,
+    }),
+  }),
+}).isRequired;
+
+export default GenerationInfo;

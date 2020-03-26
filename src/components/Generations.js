@@ -16,21 +16,6 @@ class Generations extends React.Component {
     this.setState({ results });
   }
 
-  renderPokemonDetails(match) {
-    const { isPokemonFavoriteById } = this.state;
-
-    return (
-      <PokemonDetails
-        isPokemonFavoriteById={isPokemonFavoriteById}
-        match={match}
-        pokemons={pokemons}
-        onUpdateFavoritePokemons={(pokemonId, isFavorite) => (
-          this.onUpdateFavoritePokemons(pokemonId, isFavorite)
-        )}
-      />
-    );
-  }
-
   render() {
     const { results } = this.state;
     if (results.length > 1) {
@@ -42,12 +27,15 @@ class Generations extends React.Component {
                 <li>
                   <Link
                     className="link"
-                    to={`/generations/${index}`}
-                    onClick={this.renderPokemonDetails({ url })}
+                    to={{
+                      pathname: `/generations/${index + 1}`,
+                      state: {
+                        url,
+                      },
+                    }}
                   >
                     {name}
                   </Link>
-                  {url}
                 </li>
               ))}
             </ol>
