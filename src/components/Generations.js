@@ -24,7 +24,7 @@ class Generations extends React.Component {
           <div>
             <ol>
               {results.map(({ name, url }, index) => (
-                <li>
+                <li key={name}>
                   <Link
                     className="link"
                     to={{

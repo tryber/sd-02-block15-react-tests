@@ -1,26 +1,16 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import {
-  render, cleanup, fireEvent, getByAltText,
+  render, cleanup, fireEvent, waitForDomChange,
 } from '@testing-library/react';
 import renderWithRouter from './RenderWithRouter';
 import App from './App';
 import { Pokedex, FavoritePokemons } from './components';
-import pokemons from './mockData';
+import pokemons from './mockPokemons';
+import { firstLocations, nextLocations } from './mockLocations';
+import { generations, generation1 } from './mockGenerations';
 
 afterEach(cleanup);
-
-const isPokemonFavoriteById = {
-  25: true,
-  4: true,
-  10: true,
-  23: false,
-  65: true,
-  151: true,
-  78: false,
-  143: true,
-  148: false,
-};
 
 const allTypes = pokemons.map(({ type }) => type);
 const pokemonTypes = allTypes.filter((item, index, array) => array.indexOf(item) === index);
@@ -432,6 +422,81 @@ describe('Test 4 - pokédex must contain filter buttons', () => {
         console.log('npm run test-coverage in command line');
       });
     });
-    // describe('Test 25 -  ')
+    describe('EXTRA TESTS', () => {
+      it('Test 25, 26 - location link in nav bar should redirect to /locations and show locations', async () => {
+        const { getByText, queryByText, history } = renderWithRouter(<App />);
+        const locations = getByText('Locations');
+        expect(locations.href).toBe('http://localhost/locations');
+        fireEvent.click(locations);
+        expect(history.location.pathname).toBe('/locations');
+        const fetch = jest.fn().mockResolvedValue(firstLocations);
+        await waitForDomChange()
+          .then(() => {
+            fetch().then((resolve) => {
+              resolve.forEach((element) => {
+                expect(queryByText(element)).toBeInTheDocument();
+              });
+            });
+          });
+        expect(queryByText('Next locations')).toBeInTheDocument();
+        expect(queryByText('Previous locations')).toBeInTheDocument();
+      });
+      it('Test 27 - locations page next page and previous page should navigate', async () => {
+        const { getByText, queryByText } = renderWithRouter(<App />);
+        fireEvent.click(getByText('Locations'));
+        await waitForDomChange();
+        const nextButton = queryByText('Next locations');
+        const previousButton = queryByText('Previous locations');
+        expect(nextButton).toBeInTheDocument();
+        expect(previousButton).toBeInTheDocument();
+        fireEvent.click(nextButton);
+        let fetch = jest.fn().mockResolvedValue(nextLocations);
+        await waitForDomChange()
+          .then(() => {
+            fetch().then((resolve) => {
+              resolve.forEach((newLocation) => {
+                expect(queryByText(newLocation)).toBeInTheDocument();
+              });
+            });
+          });
+        fireEvent.click(previousButton);
+        fetch = jest.fn().mockResolvedValue(firstLocations);
+        await waitForDomChange()
+          .then(() => {
+            fetch().then((resolve) => {
+              resolve.forEach((firstLocation) => {
+                expect(queryByText(firstLocation)).toBeInTheDocument();
+              });
+            });
+          });
+      });
+      it('Test 28, 29, 30, 31 - generations link in nav bar should redirect to /generations', async () => {
+        const { getByText, queryByText, history } = renderWithRouter(<App />);
+        const genButton = getByText('Generations');
+        expect(genButton.href).toBe('http://localhost/generations');
+        fireEvent.click(genButton);
+        expect(history.location.pathname).toBe('/generations');
+        let fetch = jest.fn().mockResolvedValue(generations);
+        await waitForDomChange()
+          .then(() => {
+            fetch().then((resolve) => {
+              resolve.forEach((generation, index) => {
+                expect(queryByText(generation)).toBeInTheDocument();
+                expect(getByText(generation).href).toBe(`http://localhost/generations/${index + 1}`);
+              });
+            });
+          });
+        fireEvent.click(getByText('generation-i'));
+        fetch = jest.fn().mockResolvedValue(generation1);
+        await waitForDomChange()
+          .then(() => {
+            fetch().then((resolve) => {
+              resolve.forEach((pokemon) => {
+                expect(getByText(pokemon)).toBeInTheDocument();
+              });
+            });
+          });
+      });
+    });
   });
 });
